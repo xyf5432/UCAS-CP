@@ -1,6 +1,6 @@
 #include <iostream>
 
-// #include "antlr4-runtime.h"
+#include "antlr4-runtime.h"
 #include "tree/ErrorNode.h"
 
 #include "CACTLexer.h"
@@ -9,79 +9,235 @@
 
 using namespace antlr4;
 
-#define DEFAULT_VISIT(T) \
-std::any visit##T(CACTParser::T##Context *ctx) override { \
-    std::cout << "visit "#T << std::endl;\
-    return visitChildren(ctx); \
-}
-
 class Analysis : public CACTVisitor {
 public:
-    /*std::any visitCompUnit(CACTParser::CompUnitContext *context) {
-        visitChildren( context );
-        
-        //std::cout << "enter rule [r]!" << std::endl;
-        //std::cout << "the ID is: " << context->ID()->getText().c_str() << std::endl;
-        return nullptr;
-    }*/
 
-        // 语法入口规则
-    DEFAULT_VISIT(CompUnit)     // 编译单元
+    // 语法入口规则
+    std::any visitCompUnit(CACTParser::CompUnitContext *ctx) override {
+        std::cout << "visit CompUnit" << std::endl;
+        return visitChildren(ctx);
+    }
 
     // 声明相关规则
-    DEFAULT_VISIT(Decl)         // 声明（常量或变量）
-    DEFAULT_VISIT(ConstDecl)    // 常量声明
-    DEFAULT_VISIT(BType)        // 基本类型（int/float/char）
-    DEFAULT_VISIT(ConstDef)     // 常量定义
-    DEFAULT_VISIT(ConstInitVal) // 常量初始化
-    DEFAULT_VISIT(VarDecl)      // 变量声明
-    DEFAULT_VISIT(VarDef)       // 变量定义
+    std::any visitDecl(CACTParser::DeclContext *ctx) override {
+        std::cout << "visit Decl" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitConstDecl(CACTParser::ConstDeclContext *ctx) override {
+        std::cout << "visit ConstDecl" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitBType(CACTParser::BTypeContext *ctx) override {
+        std::cout << "visit BType : " << ctx->getText() << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitConstDef(CACTParser::ConstDefContext *ctx) override {
+        std::cout << "visit ConstDef" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitConstInitVal(CACTParser::ConstInitValContext *ctx) override {
+        std::cout << "visit ConstInitVal" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitVarDecl(CACTParser::VarDeclContext *ctx) override {
+        std::cout << "visit VarDecl" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitVarDef(CACTParser::VarDefContext *ctx) override {
+        std::cout << "visit VarDef" << std::endl;
+        return visitChildren(ctx);
+    }
 
     // 函数相关规则
-    DEFAULT_VISIT(FuncDef)      // 函数定义
-    DEFAULT_VISIT(FuncType)
-    DEFAULT_VISIT(FuncFParams)  // 函数形参列表
-    DEFAULT_VISIT(FuncFParam)   // 函数形参
+    std::any visitFuncDef(CACTParser::FuncDefContext *ctx) override {
+        std::cout << "visit FuncDef" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitFuncType(CACTParser::FuncTypeContext *ctx) override {
+        std::cout << "visit FuncType : " << ctx->getText() << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitFuncFParams(CACTParser::FuncFParamsContext *ctx) override {
+        std::cout << "visit FuncFParams" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitFuncFParam(CACTParser::FuncFParamContext *ctx) override {
+        std::cout << "visit FuncFParam" << std::endl;
+        return visitChildren(ctx);
+    }
 
     // 语句块与语句规则
-    DEFAULT_VISIT(Block)        // 语句块
-    DEFAULT_VISIT(BlockItem)    // 语句块项（声明或语句）
-    DEFAULT_VISIT(AssignStmt)         // 语句（赋值/返回/条件等）
+    std::any visitBlock(CACTParser::BlockContext *ctx) override {
+        std::cout << "visit Block" << std::endl;
+        return visitChildren(ctx);
+    }
 
-    DEFAULT_VISIT(ExprStmt)
-    DEFAULT_VISIT(BlockStmt)
-    DEFAULT_VISIT(ReturnStmt)
-    DEFAULT_VISIT(IfStmt)
-    DEFAULT_VISIT(WhileStmt)
-    DEFAULT_VISIT(BreakStmt)
-    DEFAULT_VISIT(ContinueStmt)
+    std::any visitBlockItem(CACTParser::BlockItemContext *ctx) override {
+        std::cout << "visit BlockItem" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitAssignStmt(CACTParser::AssignStmtContext *ctx) override {
+        std::cout << "visit AssignStmt" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitExprStmt(CACTParser::ExprStmtContext *ctx) override {
+        std::cout << "visit ExprStmt" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitBlockStmt(CACTParser::BlockStmtContext *ctx) override {
+        std::cout << "visit BlockStmt" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitReturnStmt(CACTParser::ReturnStmtContext *ctx) override {
+        std::cout << "visit ReturnStmt" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitIfStmt(CACTParser::IfStmtContext *ctx) override {
+        std::cout << "visit IfStmt" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitWhileStmt(CACTParser::WhileStmtContext *ctx) override {
+        std::cout << "visit WhileStmt" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitBreakStmt(CACTParser::BreakStmtContext *ctx) override {
+        std::cout << "visit BreakStmt" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitContinueStmt(CACTParser::ContinueStmtContext *ctx) override {
+        std::cout << "visit ContinueStmt" << std::endl;
+        return visitChildren(ctx);
+    }
 
     // 表达式规则
-    DEFAULT_VISIT(Exp)          // 基础表达式
-    DEFAULT_VISIT(Cond)         // 条件表达式
-    DEFAULT_VISIT(LVal)         // 左值（变量或数组元素）
-    DEFAULT_VISIT(PrimaryExp)   // 基本表达式（括号/字面量/左值）
-    DEFAULT_VISIT(PrimaryUnary)     // 单目运算表达式
+    std::any visitExp(CACTParser::ExpContext *ctx) override {
+        std::cout << "visit Exp" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitCond(CACTParser::CondContext *ctx) override {
+        std::cout << "visit Cond" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitLVal(CACTParser::LValContext *ctx) override {
+        std::cout << "visit LVal" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitPrimaryExp(CACTParser::PrimaryExpContext *ctx) override {
+        std::cout << "visit PrimaryExp" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitPrimaryUnary(CACTParser::PrimaryUnaryContext *ctx) override {
+        std::cout << "visit PrimaryUnary" << std::endl;
+        return visitChildren(ctx);
+    }
+
     // 表达式运算相关规则
-    DEFAULT_VISIT(UnaryOp)        // 单目运算符（如 +, -, !）
-    DEFAULT_VISIT(FuncCall)       // 函数调用
-    DEFAULT_VISIT(MulOp)          // 乘除模运算符（*, /, %）
-    DEFAULT_VISIT(UnaryToMul)     // 单目表达式转乘法表达式
-    DEFAULT_VISIT(MulToAdd)       // 乘法表达式转加法表达式
-    DEFAULT_VISIT(AddOp)          // 加减运算符（+, -）
-    DEFAULT_VISIT(AddToRel)       // 加法表达式转关系表达式
-    DEFAULT_VISIT(RelOp)          // 关系运算符（<, >, <=, >=）
-    DEFAULT_VISIT(EqOp)           // 相等性运算符（==, !=）
-    DEFAULT_VISIT(RelToEq)        // 关系表达式转相等性表达式
-    DEFAULT_VISIT(LAndOp)         // 逻辑与运算符（&&）
-    DEFAULT_VISIT(EqToLAnd)       // 相等性表达式转逻辑与表达式
-    DEFAULT_VISIT(LOrOp)          // 逻辑或运算符（||）
-    DEFAULT_VISIT(LAndToLOr)      // 逻辑与表达式转逻辑或表达式
+    std::any visitUnaryOp(CACTParser::UnaryOpContext *ctx) override {
+        std::cout << "visit UnaryOp" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitFuncCall(CACTParser::FuncCallContext *ctx) override {
+        std::cout << "visit FuncCall" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitMulOp(CACTParser::MulOpContext *ctx) override {
+        std::cout << "visit MulOp" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitUnaryToMul(CACTParser::UnaryToMulContext *ctx) override {
+        std::cout << "visit UnaryToMul" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitMulToAdd(CACTParser::MulToAddContext *ctx) override {
+        std::cout << "visit MulToAdd" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitAddOp(CACTParser::AddOpContext *ctx) override {
+        std::cout << "visit AddOp" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitAddToRel(CACTParser::AddToRelContext *ctx) override {
+        std::cout << "visit AddToRel" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitRelOp(CACTParser::RelOpContext *ctx) override {
+        std::cout << "visit RelOp" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitEqOp(CACTParser::EqOpContext *ctx) override {
+        std::cout << "visit EqOp" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitRelToEq(CACTParser::RelToEqContext *ctx) override {
+        std::cout << "visit RelToEq" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitLAndOp(CACTParser::LAndOpContext *ctx) override {
+        std::cout << "visit LAndOp" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitEqToLAnd(CACTParser::EqToLAndContext *ctx) override {
+        std::cout << "visit EqToLAnd" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitLOrOp(CACTParser::LOrOpContext *ctx) override {
+        std::cout << "visit LOrOp" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitLAndToLOr(CACTParser::LAndToLOrContext *ctx) override {
+        std::cout << "visit LAndToLOr" << std::endl;
+        return visitChildren(ctx);
+    }
 
     // 函数参数与数值相关规则
-    DEFAULT_VISIT(FuncRParams)    // 函数实参列表
-    DEFAULT_VISIT(Number)         // 数值（整型/浮点型/字符型）
-    DEFAULT_VISIT(ConstExp)       // 常量表达式
+    std::any visitFuncRParams(CACTParser::FuncRParamsContext *ctx) override {
+        std::cout << "visit FuncRParams" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitNumber(CACTParser::NumberContext *ctx) override {
+        std::cout << "visit Number" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitConstExp(CACTParser::ConstExpContext *ctx) override {
+        std::cout << "visit ConstExp" << std::endl;
+        return visitChildren(ctx);
+    }
 
     std::any visitErrorNode(tree::ErrorNode * node) override {
         std::cout << "visit error node: " << node->getText() << std::endl;
@@ -90,9 +246,20 @@ public:
     }
 };
 
+class MyErrorListener : public BaseErrorListener {
+    public:
+        void syntaxError(Recognizer *recognizer, Token *offendingSymbol,
+                         size_t line, size_t charPosInLine,
+                         const std::string &msg, std::exception_ptr e) override {
+            std::cerr << "语法错误：第 " << line << " 行，第 " << charPosInLine
+                      << " 列：" << msg << std::endl;
+            exit(1); // 出错就终止程序
+        }
+    };
+
+    
+
 int main(int argc, const char* argv[]) {
-  //std::ifstream stream;
-  //stream.open("../test/samples_lex_and_syntax/00_true_main.cact");
   std::ifstream stream(argv[1]);
   if (!stream.is_open()) {
     std::cout << "no such file!" << std::endl;
@@ -104,8 +271,13 @@ int main(int argc, const char* argv[]) {
   CommonTokenStream  tokens(&lexer);
   CACTParser        parser(&tokens);
 
+  // 替换默认错误监听器
+parser.removeErrorListeners(); // 清除默认控制台打印
+parser.addErrorListener(new MyErrorListener()); // 添加自定义监听器
+
   Analysis visitor;
   visitor.visit( parser.compUnit() );
 
   return 0;
 }
+

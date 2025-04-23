@@ -1,4 +1,0 @@
-/home/compiler14/cact/build/CMakeFiles/antlr.dir
-/home/compiler14/cact/build/CMakeFiles/compiler.dir
-/home/compiler14/cact/build/CMakeFiles/edit_cache.dir
-/home/compiler14/cact/build/CMakeFiles/rebuild_cache.dir

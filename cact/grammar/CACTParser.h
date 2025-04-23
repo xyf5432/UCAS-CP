@@ -85,6 +85,7 @@ public:
   public:
     CompUnitContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *EOF();
     std::vector<DeclContext *> decl();
     DeclContext* decl(size_t i);
     std::vector<FuncDefContext *> funcDef();
@@ -392,7 +393,7 @@ public:
   public:
     ConstExpContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    AddExpContext *addExp();
+    NumberContext *number();
 
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;

@@ -6,7 +6,7 @@ grammar CACT;
 
 // 编译单元
 compUnit
-    : (decl | funcDef)+
+    : (decl | funcDef)+ EOF
     ;
 
 // 声明
@@ -101,7 +101,7 @@ exp
 
 // 常量表达式
 constExp
-    : addExp
+    : number
     ;
 
 // 条件表达式
@@ -190,17 +190,18 @@ IntConst
     ;
 
 FloatConst
-    : [+-]? Digit+ '.' Digit*    // 普通形式：如123.45、123.
+    : ([+-]? Digit+ '.' Digit*    // 普通形式：如123.45、123.
     | [+-]? '.' Digit+          // 普通形式：如.45
     | [+-]? ( ( Digit+ ('.' Digit*)? | '.' Digit+ ) // 基数部分
-          [Ee] [+-]? Digit+)                     // 指数部分
-      [fF]
+          [Ee] [+-]? Digit+))                     // 指数部分
+      [fF]?
     ;
 
 //' '内转义或其他字符（排除需要转义的字符）
 CharConst
     : '\'' (EscapeChar | ~['\\\r\n]) '\''
     ;
+
 
 // 空白和注释
 NewLine
