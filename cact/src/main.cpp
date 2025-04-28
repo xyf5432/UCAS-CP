@@ -1,16 +1,21 @@
 #include <iostream>
 
-#include "antlr4-runtime.h"
+// #include "antlr4-runtime.h"
 #include "tree/ErrorNode.h"
 
 #include "CACTLexer.h"
 #include "CACTParser.h"
 #include "CACTVisitor.h"
+#include "symboltable.h"
 
 using namespace antlr4;
 
 class Analysis : public CACTVisitor {
 public:
+    SymbolTable* globalTable = new SymbolTable();
+    SymbolTable* current = globalTable;
+    enum define_type {SYM,FUN}; // 声明类型暂存
+    define_type define_type;
 
     // 语法入口规则
     std::any visitCompUnit(CACTParser::CompUnitContext *ctx) override {
@@ -21,12 +26,39 @@ public:
     // 声明相关规则
     std::any visitDecl(CACTParser::DeclContext *ctx) override {
         std::cout << "visit Decl" << std::endl;
+        define_type = SYM;
         return visitChildren(ctx);
     }
 
     std::any visitConstDecl(CACTParser::ConstDeclContext *ctx) override {
         std::cout << "visit ConstDecl" << std::endl;
-        return visitChildren(ctx);
+        auto result = visitChildren(ctx);
+        SymType SymType;
+        SymType.base_type = ctx->bType()->getText();
+        SymType.is_const = true;
+        std::vector<int> array_dims;
+        
+        // 遍历所有ConstDef，获取每个的Ident
+        for (auto constDefCtx : ctx->constDef()) {
+            std::string Ident = constDefCtx->Ident()->getText();
+            for (auto intconstctx : constDefCtx->IntConst()) {
+                // 将字符串维度值转换为整数（例如 "5" → 5）
+                int dim = std::stoi(intconstctx->getText());
+                array_dims.push_back(dim);
+            }
+
+            if (!array_dims.empty()) {
+                SymType.is_array = true;
+                SymType.array_dims = array_dims;
+            } else {
+                SymType.is_array = false;
+            }
+            
+            // 这里可以处理每个Ident和BType的关系，例如存入符号表
+            current->insertsym(Ident,SymType);
+            std::cout << "ConstDef Ident: " << Ident << ", Type: " << SymType.is_array << SymType.base_type << std::endl;
+        }
+        return result;
     }
 
     std::any visitBType(CACTParser::BTypeContext *ctx) override {
@@ -46,7 +78,33 @@ public:
 
     std::any visitVarDecl(CACTParser::VarDeclContext *ctx) override {
         std::cout << "visit VarDecl" << std::endl;
-        return visitChildren(ctx);
+        auto result = visitChildren(ctx);
+        SymType SymType;
+        SymType.base_type = ctx->bType()->getText();
+        SymType.is_const = false;
+        std::vector<int> array_dims;
+
+        // 遍历所有varDef，获取每个的Ident
+        for (auto varDefCtx : ctx->varDef()) {
+            std::string Ident = varDefCtx->Ident()->getText();
+            for (auto intconstctx : varDefCtx->IntConst()) {
+                // 将字符串维度值转换为整数（例如 "5" → 5）
+                int dim = std::stoi(intconstctx->getText());
+                array_dims.push_back(dim);
+            }
+
+            if (!array_dims.empty()) {
+                SymType.is_array = true;
+                SymType.array_dims = array_dims;
+            } else {
+                SymType.is_array = false;
+            }
+
+            // 这里可以处理每个Ident和BType的关系，例如存入符号表
+            current->insertsym(Ident,SymType);
+            std::cout << "varDef Ident: " << Ident << ", Type: " << SymType.is_array << SymType.base_type << std::endl;
+        }
+        return result;
     }
 
     std::any visitVarDef(CACTParser::VarDefContext *ctx) override {
@@ -57,7 +115,52 @@ public:
     // 函数相关规则
     std::any visitFuncDef(CACTParser::FuncDefContext *ctx) override {
         std::cout << "visit FuncDef" << std::endl;
-        return visitChildren(ctx);
+        define_type = FUN;
+        auto result = visitChildren(ctx);
+        FunType FunType;
+        FunType = stringToFunType(ctx->funcType()->getText());
+        // 获取name
+        std::string name = ctx->Ident()->getText();
+        // 获取params
+        std::vector<std::string> params_name;
+        std::vector<SymType> params_type;
+        if (auto paramsCtx = ctx->funcFParams()) {
+            for (auto paramCtx : paramsCtx->funcFParam()) {
+                // 获取参数类型
+                SymType paramType;
+                std::string paramBType = paramCtx->bType()->getText();
+                paramType.base_type = paramBType;
+                paramType.is_const = false;
+                std::vector<int> array_dims;
+                if (paramCtx->getText().find("[]")!=-1)
+                {
+                    array_dims.push_back(-1);
+                }
+
+                for (auto intconstctx : paramCtx->IntConst()) {
+                    // 将字符串维度值转换为整数（例如 "5" → 5）
+                    int dim = std::stoi(intconstctx->getText());
+                    array_dims.push_back(dim);
+                }
+    
+                if (!array_dims.empty()) {
+                    paramType.is_array = true;
+                    paramType.array_dims = array_dims;
+                } else {
+                    paramType.is_array = false;
+                }
+                
+                // 这里可以处理每个Ident和BType的关系，例如存入符号表
+                std::string Ident = paramCtx->Ident()->getText();
+                params_name.push_back(Ident);
+                params_type.push_back(paramType);
+                std::cout << "params Ident: " << Ident << ", Type: " << paramType.is_array << paramType.base_type << std::endl;
+            }
+        }
+        // 存入符号表
+        current->insertfun(name,FunType,params_name,params_type);
+        std::cout << "FunDef Ident: " << name << ", Type: " << ctx->funcType()->getText() << std::endl;
+        return result;
     }
 
     std::any visitFuncType(CACTParser::FuncTypeContext *ctx) override {
@@ -77,8 +180,50 @@ public:
 
     // 语句块与语句规则
     std::any visitBlock(CACTParser::BlockContext *ctx) override {
+        current = current->enterScope();
+        //将函数参数加入符号表
+        if (dynamic_cast<CACTParser::FuncDefContext*>(ctx->parent)!=nullptr)
+        {
+            auto* func_def = dynamic_cast<CACTParser::FuncDefContext*>(ctx->parent);
+            if (func_def->funcFParams()) {
+                for (auto param : func_def->funcFParams()->funcFParam()) {
+                    // 解析参数类型
+                    SymType type;
+                    type.base_type = param->bType()->getText();
+                    type.is_const = false; // 函数参数默认不可为 const
+        
+                    std::vector<int> array_dims;
+                    if (param->getText().find("[]")!=-1)
+                    {
+                        array_dims.push_back(-1);
+                    }
+
+                    for (auto intconstctx : param->IntConst()) {
+                        // 将字符串维度值转换为整数（例如 "5" → 5）
+                        int dim = std::stoi(intconstctx->getText());
+                        array_dims.push_back(dim);
+                    }
+        
+                    if (!array_dims.empty()) {
+                        type.is_array = true;
+                        type.array_dims = array_dims;
+                    } else {
+                        type.is_array = false;
+                    }
+
+                    std::string Ident = param->Ident()->getText();
+                    current->insertsym(Ident,type);
+                }
+            }
+        }
+        
         std::cout << "visit Block" << std::endl;
-        return visitChildren(ctx);
+        auto result = visitChildren(ctx);
+        current->print();
+        SymbolTable* temp = current;
+        current = current->parent;
+        delete temp;
+        return result;
     }
 
     std::any visitBlockItem(CACTParser::BlockItemContext *ctx) override {
@@ -246,19 +391,6 @@ public:
     }
 };
 
-class MyErrorListener : public BaseErrorListener {
-    public:
-        void syntaxError(Recognizer *recognizer, Token *offendingSymbol,
-                         size_t line, size_t charPosInLine,
-                         const std::string &msg, std::exception_ptr e) override {
-            std::cerr << "语法错误：第 " << line << " 行，第 " << charPosInLine
-                      << " 列：" << msg << std::endl;
-            exit(1); // 出错就终止程序
-        }
-    };
-
-    
-
 int main(int argc, const char* argv[]) {
   std::ifstream stream(argv[1]);
   if (!stream.is_open()) {
@@ -271,13 +403,7 @@ int main(int argc, const char* argv[]) {
   CommonTokenStream  tokens(&lexer);
   CACTParser        parser(&tokens);
 
-  // 替换默认错误监听器
-parser.removeErrorListeners(); // 清除默认控制台打印
-parser.addErrorListener(new MyErrorListener()); // 添加自定义监听器
-
   Analysis visitor;
   visitor.visit( parser.compUnit() );
-
   return 0;
 }
-

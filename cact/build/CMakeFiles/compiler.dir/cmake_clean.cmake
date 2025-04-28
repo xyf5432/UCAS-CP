@@ -17,6 +17,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/compiler.dir/grammar/hello/HelloVisitor.cpp.o.d"
   "CMakeFiles/compiler.dir/src/main.cpp.o"
   "CMakeFiles/compiler.dir/src/main.cpp.o.d"
+  "CMakeFiles/compiler.dir/src/symboltable.cpp.o"
+  "CMakeFiles/compiler.dir/src/symboltable.cpp.o.d"
   "compiler"
   "compiler.pdb"
 )

@@ -3622,6 +3622,30 @@ src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
+src/symboltable.o: src/symboltable.cpp.o
+.PHONY : src/symboltable.o
+
+# target to build an object file
+src/symboltable.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/src/symboltable.cpp.o
+.PHONY : src/symboltable.cpp.o
+
+src/symboltable.i: src/symboltable.cpp.i
+.PHONY : src/symboltable.i
+
+# target to preprocess a source file
+src/symboltable.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/src/symboltable.cpp.i
+.PHONY : src/symboltable.cpp.i
+
+src/symboltable.s: src/symboltable.cpp.s
+.PHONY : src/symboltable.s
+
+# target to generate assembly for a file
+src/symboltable.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/src/symboltable.cpp.s
+.PHONY : src/symboltable.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -4067,6 +4091,9 @@ help:
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/symboltable.o"
+	@echo "... src/symboltable.i"
+	@echo "... src/symboltable.s"
 .PHONY : help
 
 

@@ -104,7 +104,10 @@ CMakeFiles/compiler.dir/src/main.cpp.o: \
  /usr/include/c++/9/bits/basic_ios.tcc \
  /usr/include/c++/9/bits/ostream.tcc /usr/include/c++/9/istream \
  /usr/include/c++/9/bits/istream.tcc \
- /home/compiler14/cact/deps/antlr4-runtime/antlr4-runtime.h \
+ /home/compiler14/cact/deps/antlr4-runtime/tree/ErrorNode.h \
+ /home/compiler14/cact/deps/antlr4-runtime/tree/TerminalNode.h \
+ /home/compiler14/cact/deps/antlr4-runtime/tree/ParseTree.h \
+ /home/compiler14/cact/deps/antlr4-runtime/support/Any.h \
  /home/compiler14/cact/deps/antlr4-runtime/antlr4-common.h \
  /usr/include/c++/9/algorithm /usr/include/c++/9/utility \
  /usr/include/c++/9/bits/stl_relops.h /usr/include/c++/9/bits/stl_algo.h \
@@ -163,6 +166,9 @@ CMakeFiles/compiler.dir/src/main.cpp.o: \
  /usr/include/c++/9/bits/stl_stack.h /usr/include/c++/9/unordered_set \
  /usr/include/c++/9/bits/unordered_set.h \
  /home/compiler14/cact/deps/antlr4-runtime/support/Declarations.h \
+ /home/compiler14/cact/deps/antlr4-runtime/tree/ParseTreeType.h \
+ /home/compiler14/cact/grammar/CACTLexer.h \
+ /home/compiler14/cact/deps/antlr4-runtime/antlr4-runtime.h \
  /home/compiler14/cact/deps/antlr4-runtime/ANTLRErrorListener.h \
  /home/compiler14/cact/deps/antlr4-runtime/RecognitionException.h \
  /home/compiler14/cact/deps/antlr4-runtime/Exceptions.h \
@@ -191,9 +197,6 @@ CMakeFiles/compiler.dir/src/main.cpp.o: \
  /home/compiler14/cact/deps/antlr4-runtime/InterpreterRuleContext.h \
  /home/compiler14/cact/deps/antlr4-runtime/ParserRuleContext.h \
  /home/compiler14/cact/deps/antlr4-runtime/RuleContext.h \
- /home/compiler14/cact/deps/antlr4-runtime/tree/ParseTree.h \
- /home/compiler14/cact/deps/antlr4-runtime/support/Any.h \
- /home/compiler14/cact/deps/antlr4-runtime/tree/ParseTreeType.h \
  /home/compiler14/cact/deps/antlr4-runtime/support/CPPUtils.h \
  /home/compiler14/cact/deps/antlr4-runtime/Lexer.h \
  /home/compiler14/cact/deps/antlr4-runtime/Recognizer.h \
@@ -308,8 +311,6 @@ CMakeFiles/compiler.dir/src/main.cpp.o: \
  /home/compiler14/cact/deps/antlr4-runtime/support/Arrays.h \
  /home/compiler14/cact/deps/antlr4-runtime/tree/AbstractParseTreeVisitor.h \
  /home/compiler14/cact/deps/antlr4-runtime/tree/ParseTreeVisitor.h \
- /home/compiler14/cact/deps/antlr4-runtime/tree/ErrorNode.h \
- /home/compiler14/cact/deps/antlr4-runtime/tree/TerminalNode.h \
  /home/compiler14/cact/deps/antlr4-runtime/tree/ErrorNodeImpl.h \
  /home/compiler14/cact/deps/antlr4-runtime/tree/TerminalNodeImpl.h \
  /home/compiler14/cact/deps/antlr4-runtime/tree/ParseTreeProperty.h \
@@ -333,6 +334,6 @@ CMakeFiles/compiler.dir/src/main.cpp.o: \
  /home/compiler14/cact/deps/antlr4-runtime/tree/xpath/XPathTokenElement.h \
  /home/compiler14/cact/deps/antlr4-runtime/tree/xpath/XPathWildcardAnywhereElement.h \
  /home/compiler14/cact/deps/antlr4-runtime/tree/xpath/XPathWildcardElement.h \
- /home/compiler14/cact/grammar/CACTLexer.h \
  /home/compiler14/cact/grammar/CACTParser.h \
- /home/compiler14/cact/grammar/CACTVisitor.h
+ /home/compiler14/cact/grammar/CACTVisitor.h \
+ /home/compiler14/cact/src/symboltable.h
