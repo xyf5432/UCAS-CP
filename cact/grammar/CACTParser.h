@@ -290,88 +290,17 @@ public:
   class  StmtContext : public antlr4::ParserRuleContext {
   public:
     StmtContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-   
-    StmtContext() = default;
-    void copyFrom(StmtContext *context);
-    using antlr4::ParserRuleContext::copyFrom;
-
     virtual size_t getRuleIndex() const override;
-
-   
-  };
-
-  class  ExprStmtContext : public StmtContext {
-  public:
-    ExprStmtContext(StmtContext *ctx);
-
+    LValContext *lVal();
     ExpContext *exp();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  WhileStmtContext : public StmtContext {
-  public:
-    WhileStmtContext(StmtContext *ctx);
-
-    CondContext *cond();
-    StmtContext *stmt();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  IfStmtContext : public StmtContext {
-  public:
-    IfStmtContext(StmtContext *ctx);
-
+    BlockContext *block();
     CondContext *cond();
     std::vector<StmtContext *> stmt();
     StmtContext* stmt(size_t i);
 
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  BlockStmtContext : public StmtContext {
-  public:
-    BlockStmtContext(StmtContext *ctx);
-
-    BlockContext *block();
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  AssignStmtContext : public StmtContext {
-  public:
-    AssignStmtContext(StmtContext *ctx);
-
-    LValContext *lVal();
-    ExpContext *exp();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  BreakStmtContext : public StmtContext {
-  public:
-    BreakStmtContext(StmtContext *ctx);
-
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  ReturnStmtContext : public StmtContext {
-  public:
-    ReturnStmtContext(StmtContext *ctx);
-
-    ExpContext *exp();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  ContinueStmtContext : public StmtContext {
-  public:
-    ContinueStmtContext(StmtContext *ctx);
-
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
   };
 
   StmtContext* stmt();
@@ -477,42 +406,15 @@ public:
   class  UnaryExpContext : public antlr4::ParserRuleContext {
   public:
     UnaryExpContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-   
-    UnaryExpContext() = default;
-    void copyFrom(UnaryExpContext *context);
-    using antlr4::ParserRuleContext::copyFrom;
-
     virtual size_t getRuleIndex() const override;
-
-   
-  };
-
-  class  UnaryOpContext : public UnaryExpContext {
-  public:
-    UnaryOpContext(UnaryExpContext *ctx);
-
-    UnaryExpContext *unaryExp();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  PrimaryUnaryContext : public UnaryExpContext {
-  public:
-    PrimaryUnaryContext(UnaryExpContext *ctx);
-
     PrimaryExpContext *primaryExp();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  FuncCallContext : public UnaryExpContext {
-  public:
-    FuncCallContext(UnaryExpContext *ctx);
-
+    UnaryExpContext *unaryExp();
     antlr4::tree::TerminalNode *Ident();
     FuncRParamsContext *funcRParams();
 
+
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
   };
 
   UnaryExpContext* unaryExp();
@@ -520,33 +422,13 @@ public:
   class  MulExpContext : public antlr4::ParserRuleContext {
   public:
     MulExpContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-   
-    MulExpContext() = default;
-    void copyFrom(MulExpContext *context);
-    using antlr4::ParserRuleContext::copyFrom;
-
     virtual size_t getRuleIndex() const override;
-
-   
-  };
-
-  class  MulOpContext : public MulExpContext {
-  public:
-    MulOpContext(MulExpContext *ctx);
-
+    UnaryExpContext *unaryExp();
     MulExpContext *mulExp();
-    UnaryExpContext *unaryExp();
+
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  UnaryToMulContext : public MulExpContext {
-  public:
-    UnaryToMulContext(MulExpContext *ctx);
-
-    UnaryExpContext *unaryExp();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
   };
 
   MulExpContext* mulExp();
@@ -554,33 +436,13 @@ public:
   class  AddExpContext : public antlr4::ParserRuleContext {
   public:
     AddExpContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-   
-    AddExpContext() = default;
-    void copyFrom(AddExpContext *context);
-    using antlr4::ParserRuleContext::copyFrom;
-
     virtual size_t getRuleIndex() const override;
-
-   
-  };
-
-  class  MulToAddContext : public AddExpContext {
-  public:
-    MulToAddContext(AddExpContext *ctx);
-
     MulExpContext *mulExp();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  AddOpContext : public AddExpContext {
-  public:
-    AddOpContext(AddExpContext *ctx);
-
     AddExpContext *addExp();
-    MulExpContext *mulExp();
+
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
   };
 
   AddExpContext* addExp();
@@ -588,33 +450,13 @@ public:
   class  RelExpContext : public antlr4::ParserRuleContext {
   public:
     RelExpContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-   
-    RelExpContext() = default;
-    void copyFrom(RelExpContext *context);
-    using antlr4::ParserRuleContext::copyFrom;
-
     virtual size_t getRuleIndex() const override;
-
-   
-  };
-
-  class  AddToRelContext : public RelExpContext {
-  public:
-    AddToRelContext(RelExpContext *ctx);
-
     AddExpContext *addExp();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  RelOpContext : public RelExpContext {
-  public:
-    RelOpContext(RelExpContext *ctx);
-
     RelExpContext *relExp();
-    AddExpContext *addExp();
+
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
   };
 
   RelExpContext* relExp();
@@ -622,33 +464,13 @@ public:
   class  EqExpContext : public antlr4::ParserRuleContext {
   public:
     EqExpContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-   
-    EqExpContext() = default;
-    void copyFrom(EqExpContext *context);
-    using antlr4::ParserRuleContext::copyFrom;
-
     virtual size_t getRuleIndex() const override;
-
-   
-  };
-
-  class  EqOpContext : public EqExpContext {
-  public:
-    EqOpContext(EqExpContext *ctx);
-
+    RelExpContext *relExp();
     EqExpContext *eqExp();
-    RelExpContext *relExp();
+
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  RelToEqContext : public EqExpContext {
-  public:
-    RelToEqContext(EqExpContext *ctx);
-
-    RelExpContext *relExp();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
   };
 
   EqExpContext* eqExp();
@@ -656,33 +478,13 @@ public:
   class  LAndExpContext : public antlr4::ParserRuleContext {
   public:
     LAndExpContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-   
-    LAndExpContext() = default;
-    void copyFrom(LAndExpContext *context);
-    using antlr4::ParserRuleContext::copyFrom;
-
     virtual size_t getRuleIndex() const override;
-
-   
-  };
-
-  class  LAndOpContext : public LAndExpContext {
-  public:
-    LAndOpContext(LAndExpContext *ctx);
-
+    EqExpContext *eqExp();
     LAndExpContext *lAndExp();
-    EqExpContext *eqExp();
+
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  EqToLAndContext : public LAndExpContext {
-  public:
-    EqToLAndContext(LAndExpContext *ctx);
-
-    EqExpContext *eqExp();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
   };
 
   LAndExpContext* lAndExp();
@@ -690,33 +492,13 @@ public:
   class  LOrExpContext : public antlr4::ParserRuleContext {
   public:
     LOrExpContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-   
-    LOrExpContext() = default;
-    void copyFrom(LOrExpContext *context);
-    using antlr4::ParserRuleContext::copyFrom;
-
     virtual size_t getRuleIndex() const override;
-
-   
-  };
-
-  class  LOrOpContext : public LOrExpContext {
-  public:
-    LOrOpContext(LOrExpContext *ctx);
-
+    LAndExpContext *lAndExp();
     LOrExpContext *lOrExp();
-    LAndExpContext *lAndExp();
+
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  LAndToLOrContext : public LOrExpContext {
-  public:
-    LAndToLOrContext(LOrExpContext *ctx);
-
-    LAndExpContext *lAndExp();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
   };
 
   LOrExpContext* lOrExp();

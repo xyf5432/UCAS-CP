@@ -231,49 +231,18 @@ public:
         return visitChildren(ctx);
     }
 
-    std::any visitAssignStmt(CACTParser::AssignStmtContext *ctx) override {
-        std::cout << "visit AssignStmt" << std::endl;
+    std::any visitStmt(CACTParser::StmtContext *ctx) override {
+        std::cout << "visit Stmt" << std::endl;
         return visitChildren(ctx);
     }
-
-    std::any visitExprStmt(CACTParser::ExprStmtContext *ctx) override {
-        std::cout << "visit ExprStmt" << std::endl;
-        return visitChildren(ctx);
-    }
-
-    std::any visitBlockStmt(CACTParser::BlockStmtContext *ctx) override {
-        std::cout << "visit BlockStmt" << std::endl;
-        return visitChildren(ctx);
-    }
-
-    std::any visitReturnStmt(CACTParser::ReturnStmtContext *ctx) override {
-        std::cout << "visit ReturnStmt" << std::endl;
-        return visitChildren(ctx);
-    }
-
-    std::any visitIfStmt(CACTParser::IfStmtContext *ctx) override {
-        std::cout << "visit IfStmt" << std::endl;
-        return visitChildren(ctx);
-    }
-
-    std::any visitWhileStmt(CACTParser::WhileStmtContext *ctx) override {
-        std::cout << "visit WhileStmt" << std::endl;
-        return visitChildren(ctx);
-    }
-
-    std::any visitBreakStmt(CACTParser::BreakStmtContext *ctx) override {
-        std::cout << "visit BreakStmt" << std::endl;
-        return visitChildren(ctx);
-    }
-
-    std::any visitContinueStmt(CACTParser::ContinueStmtContext *ctx) override {
-        std::cout << "visit ContinueStmt" << std::endl;
-        return visitChildren(ctx);
-    }
-
-    // 表达式规则
+    
     std::any visitExp(CACTParser::ExpContext *ctx) override {
         std::cout << "visit Exp" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitConstExp(CACTParser::ConstExpContext *ctx) override {
+        std::cout << "visit ConstExp" << std::endl;
         return visitChildren(ctx);
     }
 
@@ -287,100 +256,53 @@ public:
         return visitChildren(ctx);
     }
 
-    std::any visitPrimaryExp(CACTParser::PrimaryExpContext *ctx) override {
-        std::cout << "visit PrimaryExp" << std::endl;
-        return visitChildren(ctx);
-    }
-
-    std::any visitPrimaryUnary(CACTParser::PrimaryUnaryContext *ctx) override {
-        std::cout << "visit PrimaryUnary" << std::endl;
-        return visitChildren(ctx);
-    }
-
-    // 表达式运算相关规则
-    std::any visitUnaryOp(CACTParser::UnaryOpContext *ctx) override {
-        std::cout << "visit UnaryOp" << std::endl;
-        return visitChildren(ctx);
-    }
-
-    std::any visitFuncCall(CACTParser::FuncCallContext *ctx) override {
-        std::cout << "visit FuncCall" << std::endl;
-        return visitChildren(ctx);
-    }
-
-    std::any visitMulOp(CACTParser::MulOpContext *ctx) override {
-        std::cout << "visit MulOp" << std::endl;
-        return visitChildren(ctx);
-    }
-
-    std::any visitUnaryToMul(CACTParser::UnaryToMulContext *ctx) override {
-        std::cout << "visit UnaryToMul" << std::endl;
-        return visitChildren(ctx);
-    }
-
-    std::any visitMulToAdd(CACTParser::MulToAddContext *ctx) override {
-        std::cout << "visit MulToAdd" << std::endl;
-        return visitChildren(ctx);
-    }
-
-    std::any visitAddOp(CACTParser::AddOpContext *ctx) override {
-        std::cout << "visit AddOp" << std::endl;
-        return visitChildren(ctx);
-    }
-
-    std::any visitAddToRel(CACTParser::AddToRelContext *ctx) override {
-        std::cout << "visit AddToRel" << std::endl;
-        return visitChildren(ctx);
-    }
-
-    std::any visitRelOp(CACTParser::RelOpContext *ctx) override {
-        std::cout << "visit RelOp" << std::endl;
-        return visitChildren(ctx);
-    }
-
-    std::any visitEqOp(CACTParser::EqOpContext *ctx) override {
-        std::cout << "visit EqOp" << std::endl;
-        return visitChildren(ctx);
-    }
-
-    std::any visitRelToEq(CACTParser::RelToEqContext *ctx) override {
-        std::cout << "visit RelToEq" << std::endl;
-        return visitChildren(ctx);
-    }
-
-    std::any visitLAndOp(CACTParser::LAndOpContext *ctx) override {
-        std::cout << "visit LAndOp" << std::endl;
-        return visitChildren(ctx);
-    }
-
-    std::any visitEqToLAnd(CACTParser::EqToLAndContext *ctx) override {
-        std::cout << "visit EqToLAnd" << std::endl;
-        return visitChildren(ctx);
-    }
-
-    std::any visitLOrOp(CACTParser::LOrOpContext *ctx) override {
-        std::cout << "visit LOrOp" << std::endl;
-        return visitChildren(ctx);
-    }
-
-    std::any visitLAndToLOr(CACTParser::LAndToLOrContext *ctx) override {
-        std::cout << "visit LAndToLOr" << std::endl;
-        return visitChildren(ctx);
-    }
-
-    // 函数参数与数值相关规则
-    std::any visitFuncRParams(CACTParser::FuncRParamsContext *ctx) override {
-        std::cout << "visit FuncRParams" << std::endl;
-        return visitChildren(ctx);
-    }
-
     std::any visitNumber(CACTParser::NumberContext *ctx) override {
         std::cout << "visit Number" << std::endl;
         return visitChildren(ctx);
     }
 
-    std::any visitConstExp(CACTParser::ConstExpContext *ctx) override {
-        std::cout << "visit ConstExp" << std::endl;
+    std::any visitFuncRParams(CACTParser::FuncRParamsContext *ctx) override {
+        std::cout << "visit FuncRParams" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitPrimaryExp(CACTParser::PrimaryExpContext *ctx) override {
+        std::cout << "visit PrimaryExp" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitUnaryExp(CACTParser::UnaryExpContext *ctx) override {
+        std::cout << "visit UnaryExp" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitMulExp(CACTParser::MulExpContext *ctx) override {
+        std::cout << "visit MulExp" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitAddExp(CACTParser::AddExpContext *ctx) override {
+        std::cout << "visit AddExp" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitRelExp(CACTParser::RelExpContext *ctx) override {
+        std::cout << "visit RelExp" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitEqExp(CACTParser::EqExpContext *ctx) override {
+        std::cout << "visit EqExp" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitLAndExp(CACTParser::LAndExpContext *ctx) override {
+        std::cout << "visit LAndExp" << std::endl;
+        return visitChildren(ctx);
+    }
+
+    std::any visitLOrExp(CACTParser::LOrExpContext *ctx) override {
+        std::cout << "visit LOrExp" << std::endl;
         return visitChildren(ctx);
     }
 

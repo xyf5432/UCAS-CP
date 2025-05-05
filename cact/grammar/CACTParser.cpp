@@ -1323,143 +1323,43 @@ CACTParser::StmtContext::StmtContext(ParserRuleContext *parent, size_t invokingS
   : ParserRuleContext(parent, invokingState) {
 }
 
+CACTParser::LValContext* CACTParser::StmtContext::lVal() {
+  return getRuleContext<CACTParser::LValContext>(0);
+}
+
+CACTParser::ExpContext* CACTParser::StmtContext::exp() {
+  return getRuleContext<CACTParser::ExpContext>(0);
+}
+
+CACTParser::BlockContext* CACTParser::StmtContext::block() {
+  return getRuleContext<CACTParser::BlockContext>(0);
+}
+
+CACTParser::CondContext* CACTParser::StmtContext::cond() {
+  return getRuleContext<CACTParser::CondContext>(0);
+}
+
+std::vector<CACTParser::StmtContext *> CACTParser::StmtContext::stmt() {
+  return getRuleContexts<CACTParser::StmtContext>();
+}
+
+CACTParser::StmtContext* CACTParser::StmtContext::stmt(size_t i) {
+  return getRuleContext<CACTParser::StmtContext>(i);
+}
+
 
 size_t CACTParser::StmtContext::getRuleIndex() const {
   return CACTParser::RuleStmt;
 }
 
-void CACTParser::StmtContext::copyFrom(StmtContext *ctx) {
-  ParserRuleContext::copyFrom(ctx);
-}
 
-//----------------- ExprStmtContext ------------------------------------------------------------------
-
-CACTParser::ExpContext* CACTParser::ExprStmtContext::exp() {
-  return getRuleContext<CACTParser::ExpContext>(0);
-}
-
-CACTParser::ExprStmtContext::ExprStmtContext(StmtContext *ctx) { copyFrom(ctx); }
-
-
-std::any CACTParser::ExprStmtContext::accept(tree::ParseTreeVisitor *visitor) {
+std::any CACTParser::StmtContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<CACTVisitor*>(visitor))
-    return parserVisitor->visitExprStmt(this);
+    return parserVisitor->visitStmt(this);
   else
     return visitor->visitChildren(this);
 }
-//----------------- WhileStmtContext ------------------------------------------------------------------
 
-CACTParser::CondContext* CACTParser::WhileStmtContext::cond() {
-  return getRuleContext<CACTParser::CondContext>(0);
-}
-
-CACTParser::StmtContext* CACTParser::WhileStmtContext::stmt() {
-  return getRuleContext<CACTParser::StmtContext>(0);
-}
-
-CACTParser::WhileStmtContext::WhileStmtContext(StmtContext *ctx) { copyFrom(ctx); }
-
-
-std::any CACTParser::WhileStmtContext::accept(tree::ParseTreeVisitor *visitor) {
-  if (auto parserVisitor = dynamic_cast<CACTVisitor*>(visitor))
-    return parserVisitor->visitWhileStmt(this);
-  else
-    return visitor->visitChildren(this);
-}
-//----------------- IfStmtContext ------------------------------------------------------------------
-
-CACTParser::CondContext* CACTParser::IfStmtContext::cond() {
-  return getRuleContext<CACTParser::CondContext>(0);
-}
-
-std::vector<CACTParser::StmtContext *> CACTParser::IfStmtContext::stmt() {
-  return getRuleContexts<CACTParser::StmtContext>();
-}
-
-CACTParser::StmtContext* CACTParser::IfStmtContext::stmt(size_t i) {
-  return getRuleContext<CACTParser::StmtContext>(i);
-}
-
-CACTParser::IfStmtContext::IfStmtContext(StmtContext *ctx) { copyFrom(ctx); }
-
-
-std::any CACTParser::IfStmtContext::accept(tree::ParseTreeVisitor *visitor) {
-  if (auto parserVisitor = dynamic_cast<CACTVisitor*>(visitor))
-    return parserVisitor->visitIfStmt(this);
-  else
-    return visitor->visitChildren(this);
-}
-//----------------- BlockStmtContext ------------------------------------------------------------------
-
-CACTParser::BlockContext* CACTParser::BlockStmtContext::block() {
-  return getRuleContext<CACTParser::BlockContext>(0);
-}
-
-CACTParser::BlockStmtContext::BlockStmtContext(StmtContext *ctx) { copyFrom(ctx); }
-
-
-std::any CACTParser::BlockStmtContext::accept(tree::ParseTreeVisitor *visitor) {
-  if (auto parserVisitor = dynamic_cast<CACTVisitor*>(visitor))
-    return parserVisitor->visitBlockStmt(this);
-  else
-    return visitor->visitChildren(this);
-}
-//----------------- AssignStmtContext ------------------------------------------------------------------
-
-CACTParser::LValContext* CACTParser::AssignStmtContext::lVal() {
-  return getRuleContext<CACTParser::LValContext>(0);
-}
-
-CACTParser::ExpContext* CACTParser::AssignStmtContext::exp() {
-  return getRuleContext<CACTParser::ExpContext>(0);
-}
-
-CACTParser::AssignStmtContext::AssignStmtContext(StmtContext *ctx) { copyFrom(ctx); }
-
-
-std::any CACTParser::AssignStmtContext::accept(tree::ParseTreeVisitor *visitor) {
-  if (auto parserVisitor = dynamic_cast<CACTVisitor*>(visitor))
-    return parserVisitor->visitAssignStmt(this);
-  else
-    return visitor->visitChildren(this);
-}
-//----------------- BreakStmtContext ------------------------------------------------------------------
-
-CACTParser::BreakStmtContext::BreakStmtContext(StmtContext *ctx) { copyFrom(ctx); }
-
-
-std::any CACTParser::BreakStmtContext::accept(tree::ParseTreeVisitor *visitor) {
-  if (auto parserVisitor = dynamic_cast<CACTVisitor*>(visitor))
-    return parserVisitor->visitBreakStmt(this);
-  else
-    return visitor->visitChildren(this);
-}
-//----------------- ReturnStmtContext ------------------------------------------------------------------
-
-CACTParser::ExpContext* CACTParser::ReturnStmtContext::exp() {
-  return getRuleContext<CACTParser::ExpContext>(0);
-}
-
-CACTParser::ReturnStmtContext::ReturnStmtContext(StmtContext *ctx) { copyFrom(ctx); }
-
-
-std::any CACTParser::ReturnStmtContext::accept(tree::ParseTreeVisitor *visitor) {
-  if (auto parserVisitor = dynamic_cast<CACTVisitor*>(visitor))
-    return parserVisitor->visitReturnStmt(this);
-  else
-    return visitor->visitChildren(this);
-}
-//----------------- ContinueStmtContext ------------------------------------------------------------------
-
-CACTParser::ContinueStmtContext::ContinueStmtContext(StmtContext *ctx) { copyFrom(ctx); }
-
-
-std::any CACTParser::ContinueStmtContext::accept(tree::ParseTreeVisitor *visitor) {
-  if (auto parserVisitor = dynamic_cast<CACTVisitor*>(visitor))
-    return parserVisitor->visitContinueStmt(this);
-  else
-    return visitor->visitChildren(this);
-}
 CACTParser::StmtContext* CACTParser::stmt() {
   StmtContext *_localctx = _tracker.createInstance<StmtContext>(_ctx, getState());
   enterRule(_localctx, 28, CACTParser::RuleStmt);
@@ -1477,7 +1377,6 @@ CACTParser::StmtContext* CACTParser::stmt() {
     _errHandler->sync(this);
     switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 21, _ctx)) {
     case 1: {
-      _localctx = _tracker.createInstance<CACTParser::AssignStmtContext>(_localctx);
       enterOuterAlt(_localctx, 1);
       setState(184);
       lVal();
@@ -1491,7 +1390,6 @@ CACTParser::StmtContext* CACTParser::stmt() {
     }
 
     case 2: {
-      _localctx = _tracker.createInstance<CACTParser::ExprStmtContext>(_localctx);
       enterOuterAlt(_localctx, 2);
       setState(190);
       _errHandler->sync(this);
@@ -1508,7 +1406,6 @@ CACTParser::StmtContext* CACTParser::stmt() {
     }
 
     case 3: {
-      _localctx = _tracker.createInstance<CACTParser::BlockStmtContext>(_localctx);
       enterOuterAlt(_localctx, 3);
       setState(193);
       block();
@@ -1516,7 +1413,6 @@ CACTParser::StmtContext* CACTParser::stmt() {
     }
 
     case 4: {
-      _localctx = _tracker.createInstance<CACTParser::ReturnStmtContext>(_localctx);
       enterOuterAlt(_localctx, 4);
       setState(194);
       match(CACTParser::T__14);
@@ -1535,7 +1431,6 @@ CACTParser::StmtContext* CACTParser::stmt() {
     }
 
     case 5: {
-      _localctx = _tracker.createInstance<CACTParser::IfStmtContext>(_localctx);
       enterOuterAlt(_localctx, 5);
       setState(199);
       match(CACTParser::T__15);
@@ -1566,7 +1461,6 @@ CACTParser::StmtContext* CACTParser::stmt() {
     }
 
     case 6: {
-      _localctx = _tracker.createInstance<CACTParser::WhileStmtContext>(_localctx);
       enterOuterAlt(_localctx, 6);
       setState(208);
       match(CACTParser::T__17);
@@ -1582,7 +1476,6 @@ CACTParser::StmtContext* CACTParser::stmt() {
     }
 
     case 7: {
-      _localctx = _tracker.createInstance<CACTParser::BreakStmtContext>(_localctx);
       enterOuterAlt(_localctx, 7);
       setState(214);
       match(CACTParser::T__18);
@@ -1592,7 +1485,6 @@ CACTParser::StmtContext* CACTParser::stmt() {
     }
 
     case 8: {
-      _localctx = _tracker.createInstance<CACTParser::ContinueStmtContext>(_localctx);
       enterOuterAlt(_localctx, 8);
       setState(216);
       match(CACTParser::T__19);
@@ -2061,64 +1953,35 @@ CACTParser::UnaryExpContext::UnaryExpContext(ParserRuleContext *parent, size_t i
   : ParserRuleContext(parent, invokingState) {
 }
 
+CACTParser::PrimaryExpContext* CACTParser::UnaryExpContext::primaryExp() {
+  return getRuleContext<CACTParser::PrimaryExpContext>(0);
+}
+
+CACTParser::UnaryExpContext* CACTParser::UnaryExpContext::unaryExp() {
+  return getRuleContext<CACTParser::UnaryExpContext>(0);
+}
+
+tree::TerminalNode* CACTParser::UnaryExpContext::Ident() {
+  return getToken(CACTParser::Ident, 0);
+}
+
+CACTParser::FuncRParamsContext* CACTParser::UnaryExpContext::funcRParams() {
+  return getRuleContext<CACTParser::FuncRParamsContext>(0);
+}
+
 
 size_t CACTParser::UnaryExpContext::getRuleIndex() const {
   return CACTParser::RuleUnaryExp;
 }
 
-void CACTParser::UnaryExpContext::copyFrom(UnaryExpContext *ctx) {
-  ParserRuleContext::copyFrom(ctx);
-}
 
-//----------------- UnaryOpContext ------------------------------------------------------------------
-
-CACTParser::UnaryExpContext* CACTParser::UnaryOpContext::unaryExp() {
-  return getRuleContext<CACTParser::UnaryExpContext>(0);
-}
-
-CACTParser::UnaryOpContext::UnaryOpContext(UnaryExpContext *ctx) { copyFrom(ctx); }
-
-
-std::any CACTParser::UnaryOpContext::accept(tree::ParseTreeVisitor *visitor) {
+std::any CACTParser::UnaryExpContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<CACTVisitor*>(visitor))
-    return parserVisitor->visitUnaryOp(this);
+    return parserVisitor->visitUnaryExp(this);
   else
     return visitor->visitChildren(this);
 }
-//----------------- PrimaryUnaryContext ------------------------------------------------------------------
 
-CACTParser::PrimaryExpContext* CACTParser::PrimaryUnaryContext::primaryExp() {
-  return getRuleContext<CACTParser::PrimaryExpContext>(0);
-}
-
-CACTParser::PrimaryUnaryContext::PrimaryUnaryContext(UnaryExpContext *ctx) { copyFrom(ctx); }
-
-
-std::any CACTParser::PrimaryUnaryContext::accept(tree::ParseTreeVisitor *visitor) {
-  if (auto parserVisitor = dynamic_cast<CACTVisitor*>(visitor))
-    return parserVisitor->visitPrimaryUnary(this);
-  else
-    return visitor->visitChildren(this);
-}
-//----------------- FuncCallContext ------------------------------------------------------------------
-
-tree::TerminalNode* CACTParser::FuncCallContext::Ident() {
-  return getToken(CACTParser::Ident, 0);
-}
-
-CACTParser::FuncRParamsContext* CACTParser::FuncCallContext::funcRParams() {
-  return getRuleContext<CACTParser::FuncRParamsContext>(0);
-}
-
-CACTParser::FuncCallContext::FuncCallContext(UnaryExpContext *ctx) { copyFrom(ctx); }
-
-
-std::any CACTParser::FuncCallContext::accept(tree::ParseTreeVisitor *visitor) {
-  if (auto parserVisitor = dynamic_cast<CACTVisitor*>(visitor))
-    return parserVisitor->visitFuncCall(this);
-  else
-    return visitor->visitChildren(this);
-}
 CACTParser::UnaryExpContext* CACTParser::unaryExp() {
   UnaryExpContext *_localctx = _tracker.createInstance<UnaryExpContext>(_ctx, getState());
   enterRule(_localctx, 44, CACTParser::RuleUnaryExp);
@@ -2136,7 +1999,6 @@ CACTParser::UnaryExpContext* CACTParser::unaryExp() {
     _errHandler->sync(this);
     switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 26, _ctx)) {
     case 1: {
-      _localctx = _tracker.createInstance<CACTParser::PrimaryUnaryContext>(_localctx);
       enterOuterAlt(_localctx, 1);
       setState(254);
       primaryExp();
@@ -2144,7 +2006,6 @@ CACTParser::UnaryExpContext* CACTParser::unaryExp() {
     }
 
     case 2: {
-      _localctx = _tracker.createInstance<CACTParser::UnaryOpContext>(_localctx);
       enterOuterAlt(_localctx, 2);
       setState(255);
       _la = _input->LA(1);
@@ -2162,7 +2023,6 @@ CACTParser::UnaryExpContext* CACTParser::unaryExp() {
     }
 
     case 3: {
-      _localctx = _tracker.createInstance<CACTParser::FuncCallContext>(_localctx);
       enterOuterAlt(_localctx, 3);
       setState(257);
       match(CACTParser::Ident);
@@ -2202,49 +2062,27 @@ CACTParser::MulExpContext::MulExpContext(ParserRuleContext *parent, size_t invok
   : ParserRuleContext(parent, invokingState) {
 }
 
+CACTParser::UnaryExpContext* CACTParser::MulExpContext::unaryExp() {
+  return getRuleContext<CACTParser::UnaryExpContext>(0);
+}
+
+CACTParser::MulExpContext* CACTParser::MulExpContext::mulExp() {
+  return getRuleContext<CACTParser::MulExpContext>(0);
+}
+
 
 size_t CACTParser::MulExpContext::getRuleIndex() const {
   return CACTParser::RuleMulExp;
 }
 
-void CACTParser::MulExpContext::copyFrom(MulExpContext *ctx) {
-  ParserRuleContext::copyFrom(ctx);
-}
 
-//----------------- MulOpContext ------------------------------------------------------------------
-
-CACTParser::MulExpContext* CACTParser::MulOpContext::mulExp() {
-  return getRuleContext<CACTParser::MulExpContext>(0);
-}
-
-CACTParser::UnaryExpContext* CACTParser::MulOpContext::unaryExp() {
-  return getRuleContext<CACTParser::UnaryExpContext>(0);
-}
-
-CACTParser::MulOpContext::MulOpContext(MulExpContext *ctx) { copyFrom(ctx); }
-
-
-std::any CACTParser::MulOpContext::accept(tree::ParseTreeVisitor *visitor) {
+std::any CACTParser::MulExpContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<CACTVisitor*>(visitor))
-    return parserVisitor->visitMulOp(this);
+    return parserVisitor->visitMulExp(this);
   else
     return visitor->visitChildren(this);
 }
-//----------------- UnaryToMulContext ------------------------------------------------------------------
 
-CACTParser::UnaryExpContext* CACTParser::UnaryToMulContext::unaryExp() {
-  return getRuleContext<CACTParser::UnaryExpContext>(0);
-}
-
-CACTParser::UnaryToMulContext::UnaryToMulContext(MulExpContext *ctx) { copyFrom(ctx); }
-
-
-std::any CACTParser::UnaryToMulContext::accept(tree::ParseTreeVisitor *visitor) {
-  if (auto parserVisitor = dynamic_cast<CACTVisitor*>(visitor))
-    return parserVisitor->visitUnaryToMul(this);
-  else
-    return visitor->visitChildren(this);
-}
 
 CACTParser::MulExpContext* CACTParser::mulExp() {
    return mulExp(0);
@@ -2271,10 +2109,6 @@ CACTParser::MulExpContext* CACTParser::mulExp(int precedence) {
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    _localctx = _tracker.createInstance<UnaryToMulContext>(_localctx);
-    _ctx = _localctx;
-    previousContext = _localctx;
-
     setState(266);
     unaryExp();
     _ctx->stop = _input->LT(-1);
@@ -2286,9 +2120,8 @@ CACTParser::MulExpContext* CACTParser::mulExp(int precedence) {
         if (!_parseListeners.empty())
           triggerExitRuleEvent();
         previousContext = _localctx;
-        auto newContext = _tracker.createInstance<MulOpContext>(_tracker.createInstance<MulExpContext>(parentContext, parentState));
-        _localctx = newContext;
-        pushNewRecursionContext(newContext, startState, RuleMulExp);
+        _localctx = _tracker.createInstance<MulExpContext>(parentContext, parentState);
+        pushNewRecursionContext(_localctx, startState, RuleMulExp);
         setState(268);
 
         if (!(precpred(_ctx, 1))) throw FailedPredicateException(this, "precpred(_ctx, 1)");
@@ -2324,49 +2157,27 @@ CACTParser::AddExpContext::AddExpContext(ParserRuleContext *parent, size_t invok
   : ParserRuleContext(parent, invokingState) {
 }
 
+CACTParser::MulExpContext* CACTParser::AddExpContext::mulExp() {
+  return getRuleContext<CACTParser::MulExpContext>(0);
+}
+
+CACTParser::AddExpContext* CACTParser::AddExpContext::addExp() {
+  return getRuleContext<CACTParser::AddExpContext>(0);
+}
+
 
 size_t CACTParser::AddExpContext::getRuleIndex() const {
   return CACTParser::RuleAddExp;
 }
 
-void CACTParser::AddExpContext::copyFrom(AddExpContext *ctx) {
-  ParserRuleContext::copyFrom(ctx);
-}
 
-//----------------- MulToAddContext ------------------------------------------------------------------
-
-CACTParser::MulExpContext* CACTParser::MulToAddContext::mulExp() {
-  return getRuleContext<CACTParser::MulExpContext>(0);
-}
-
-CACTParser::MulToAddContext::MulToAddContext(AddExpContext *ctx) { copyFrom(ctx); }
-
-
-std::any CACTParser::MulToAddContext::accept(tree::ParseTreeVisitor *visitor) {
+std::any CACTParser::AddExpContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<CACTVisitor*>(visitor))
-    return parserVisitor->visitMulToAdd(this);
+    return parserVisitor->visitAddExp(this);
   else
     return visitor->visitChildren(this);
 }
-//----------------- AddOpContext ------------------------------------------------------------------
 
-CACTParser::AddExpContext* CACTParser::AddOpContext::addExp() {
-  return getRuleContext<CACTParser::AddExpContext>(0);
-}
-
-CACTParser::MulExpContext* CACTParser::AddOpContext::mulExp() {
-  return getRuleContext<CACTParser::MulExpContext>(0);
-}
-
-CACTParser::AddOpContext::AddOpContext(AddExpContext *ctx) { copyFrom(ctx); }
-
-
-std::any CACTParser::AddOpContext::accept(tree::ParseTreeVisitor *visitor) {
-  if (auto parserVisitor = dynamic_cast<CACTVisitor*>(visitor))
-    return parserVisitor->visitAddOp(this);
-  else
-    return visitor->visitChildren(this);
-}
 
 CACTParser::AddExpContext* CACTParser::addExp() {
    return addExp(0);
@@ -2393,10 +2204,6 @@ CACTParser::AddExpContext* CACTParser::addExp(int precedence) {
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    _localctx = _tracker.createInstance<MulToAddContext>(_localctx);
-    _ctx = _localctx;
-    previousContext = _localctx;
-
     setState(277);
     mulExp(0);
     _ctx->stop = _input->LT(-1);
@@ -2408,9 +2215,8 @@ CACTParser::AddExpContext* CACTParser::addExp(int precedence) {
         if (!_parseListeners.empty())
           triggerExitRuleEvent();
         previousContext = _localctx;
-        auto newContext = _tracker.createInstance<AddOpContext>(_tracker.createInstance<AddExpContext>(parentContext, parentState));
-        _localctx = newContext;
-        pushNewRecursionContext(newContext, startState, RuleAddExp);
+        _localctx = _tracker.createInstance<AddExpContext>(parentContext, parentState);
+        pushNewRecursionContext(_localctx, startState, RuleAddExp);
         setState(279);
 
         if (!(precpred(_ctx, 1))) throw FailedPredicateException(this, "precpred(_ctx, 1)");
@@ -2447,49 +2253,27 @@ CACTParser::RelExpContext::RelExpContext(ParserRuleContext *parent, size_t invok
   : ParserRuleContext(parent, invokingState) {
 }
 
+CACTParser::AddExpContext* CACTParser::RelExpContext::addExp() {
+  return getRuleContext<CACTParser::AddExpContext>(0);
+}
+
+CACTParser::RelExpContext* CACTParser::RelExpContext::relExp() {
+  return getRuleContext<CACTParser::RelExpContext>(0);
+}
+
 
 size_t CACTParser::RelExpContext::getRuleIndex() const {
   return CACTParser::RuleRelExp;
 }
 
-void CACTParser::RelExpContext::copyFrom(RelExpContext *ctx) {
-  ParserRuleContext::copyFrom(ctx);
-}
 
-//----------------- AddToRelContext ------------------------------------------------------------------
-
-CACTParser::AddExpContext* CACTParser::AddToRelContext::addExp() {
-  return getRuleContext<CACTParser::AddExpContext>(0);
-}
-
-CACTParser::AddToRelContext::AddToRelContext(RelExpContext *ctx) { copyFrom(ctx); }
-
-
-std::any CACTParser::AddToRelContext::accept(tree::ParseTreeVisitor *visitor) {
+std::any CACTParser::RelExpContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<CACTVisitor*>(visitor))
-    return parserVisitor->visitAddToRel(this);
+    return parserVisitor->visitRelExp(this);
   else
     return visitor->visitChildren(this);
 }
-//----------------- RelOpContext ------------------------------------------------------------------
 
-CACTParser::RelExpContext* CACTParser::RelOpContext::relExp() {
-  return getRuleContext<CACTParser::RelExpContext>(0);
-}
-
-CACTParser::AddExpContext* CACTParser::RelOpContext::addExp() {
-  return getRuleContext<CACTParser::AddExpContext>(0);
-}
-
-CACTParser::RelOpContext::RelOpContext(RelExpContext *ctx) { copyFrom(ctx); }
-
-
-std::any CACTParser::RelOpContext::accept(tree::ParseTreeVisitor *visitor) {
-  if (auto parserVisitor = dynamic_cast<CACTVisitor*>(visitor))
-    return parserVisitor->visitRelOp(this);
-  else
-    return visitor->visitChildren(this);
-}
 
 CACTParser::RelExpContext* CACTParser::relExp() {
    return relExp(0);
@@ -2516,10 +2300,6 @@ CACTParser::RelExpContext* CACTParser::relExp(int precedence) {
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    _localctx = _tracker.createInstance<AddToRelContext>(_localctx);
-    _ctx = _localctx;
-    previousContext = _localctx;
-
     setState(288);
     addExp(0);
     _ctx->stop = _input->LT(-1);
@@ -2531,9 +2311,8 @@ CACTParser::RelExpContext* CACTParser::relExp(int precedence) {
         if (!_parseListeners.empty())
           triggerExitRuleEvent();
         previousContext = _localctx;
-        auto newContext = _tracker.createInstance<RelOpContext>(_tracker.createInstance<RelExpContext>(parentContext, parentState));
-        _localctx = newContext;
-        pushNewRecursionContext(newContext, startState, RuleRelExp);
+        _localctx = _tracker.createInstance<RelExpContext>(parentContext, parentState);
+        pushNewRecursionContext(_localctx, startState, RuleRelExp);
         setState(290);
 
         if (!(precpred(_ctx, 1))) throw FailedPredicateException(this, "precpred(_ctx, 1)");
@@ -2569,49 +2348,27 @@ CACTParser::EqExpContext::EqExpContext(ParserRuleContext *parent, size_t invokin
   : ParserRuleContext(parent, invokingState) {
 }
 
+CACTParser::RelExpContext* CACTParser::EqExpContext::relExp() {
+  return getRuleContext<CACTParser::RelExpContext>(0);
+}
+
+CACTParser::EqExpContext* CACTParser::EqExpContext::eqExp() {
+  return getRuleContext<CACTParser::EqExpContext>(0);
+}
+
 
 size_t CACTParser::EqExpContext::getRuleIndex() const {
   return CACTParser::RuleEqExp;
 }
 
-void CACTParser::EqExpContext::copyFrom(EqExpContext *ctx) {
-  ParserRuleContext::copyFrom(ctx);
-}
 
-//----------------- EqOpContext ------------------------------------------------------------------
-
-CACTParser::EqExpContext* CACTParser::EqOpContext::eqExp() {
-  return getRuleContext<CACTParser::EqExpContext>(0);
-}
-
-CACTParser::RelExpContext* CACTParser::EqOpContext::relExp() {
-  return getRuleContext<CACTParser::RelExpContext>(0);
-}
-
-CACTParser::EqOpContext::EqOpContext(EqExpContext *ctx) { copyFrom(ctx); }
-
-
-std::any CACTParser::EqOpContext::accept(tree::ParseTreeVisitor *visitor) {
+std::any CACTParser::EqExpContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<CACTVisitor*>(visitor))
-    return parserVisitor->visitEqOp(this);
+    return parserVisitor->visitEqExp(this);
   else
     return visitor->visitChildren(this);
 }
-//----------------- RelToEqContext ------------------------------------------------------------------
 
-CACTParser::RelExpContext* CACTParser::RelToEqContext::relExp() {
-  return getRuleContext<CACTParser::RelExpContext>(0);
-}
-
-CACTParser::RelToEqContext::RelToEqContext(EqExpContext *ctx) { copyFrom(ctx); }
-
-
-std::any CACTParser::RelToEqContext::accept(tree::ParseTreeVisitor *visitor) {
-  if (auto parserVisitor = dynamic_cast<CACTVisitor*>(visitor))
-    return parserVisitor->visitRelToEq(this);
-  else
-    return visitor->visitChildren(this);
-}
 
 CACTParser::EqExpContext* CACTParser::eqExp() {
    return eqExp(0);
@@ -2638,10 +2395,6 @@ CACTParser::EqExpContext* CACTParser::eqExp(int precedence) {
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    _localctx = _tracker.createInstance<RelToEqContext>(_localctx);
-    _ctx = _localctx;
-    previousContext = _localctx;
-
     setState(299);
     relExp(0);
     _ctx->stop = _input->LT(-1);
@@ -2653,9 +2406,8 @@ CACTParser::EqExpContext* CACTParser::eqExp(int precedence) {
         if (!_parseListeners.empty())
           triggerExitRuleEvent();
         previousContext = _localctx;
-        auto newContext = _tracker.createInstance<EqOpContext>(_tracker.createInstance<EqExpContext>(parentContext, parentState));
-        _localctx = newContext;
-        pushNewRecursionContext(newContext, startState, RuleEqExp);
+        _localctx = _tracker.createInstance<EqExpContext>(parentContext, parentState);
+        pushNewRecursionContext(_localctx, startState, RuleEqExp);
         setState(301);
 
         if (!(precpred(_ctx, 1))) throw FailedPredicateException(this, "precpred(_ctx, 1)");
@@ -2692,49 +2444,27 @@ CACTParser::LAndExpContext::LAndExpContext(ParserRuleContext *parent, size_t inv
   : ParserRuleContext(parent, invokingState) {
 }
 
+CACTParser::EqExpContext* CACTParser::LAndExpContext::eqExp() {
+  return getRuleContext<CACTParser::EqExpContext>(0);
+}
+
+CACTParser::LAndExpContext* CACTParser::LAndExpContext::lAndExp() {
+  return getRuleContext<CACTParser::LAndExpContext>(0);
+}
+
 
 size_t CACTParser::LAndExpContext::getRuleIndex() const {
   return CACTParser::RuleLAndExp;
 }
 
-void CACTParser::LAndExpContext::copyFrom(LAndExpContext *ctx) {
-  ParserRuleContext::copyFrom(ctx);
-}
 
-//----------------- LAndOpContext ------------------------------------------------------------------
-
-CACTParser::LAndExpContext* CACTParser::LAndOpContext::lAndExp() {
-  return getRuleContext<CACTParser::LAndExpContext>(0);
-}
-
-CACTParser::EqExpContext* CACTParser::LAndOpContext::eqExp() {
-  return getRuleContext<CACTParser::EqExpContext>(0);
-}
-
-CACTParser::LAndOpContext::LAndOpContext(LAndExpContext *ctx) { copyFrom(ctx); }
-
-
-std::any CACTParser::LAndOpContext::accept(tree::ParseTreeVisitor *visitor) {
+std::any CACTParser::LAndExpContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<CACTVisitor*>(visitor))
-    return parserVisitor->visitLAndOp(this);
+    return parserVisitor->visitLAndExp(this);
   else
     return visitor->visitChildren(this);
 }
-//----------------- EqToLAndContext ------------------------------------------------------------------
 
-CACTParser::EqExpContext* CACTParser::EqToLAndContext::eqExp() {
-  return getRuleContext<CACTParser::EqExpContext>(0);
-}
-
-CACTParser::EqToLAndContext::EqToLAndContext(LAndExpContext *ctx) { copyFrom(ctx); }
-
-
-std::any CACTParser::EqToLAndContext::accept(tree::ParseTreeVisitor *visitor) {
-  if (auto parserVisitor = dynamic_cast<CACTVisitor*>(visitor))
-    return parserVisitor->visitEqToLAnd(this);
-  else
-    return visitor->visitChildren(this);
-}
 
 CACTParser::LAndExpContext* CACTParser::lAndExp() {
    return lAndExp(0);
@@ -2761,10 +2491,6 @@ CACTParser::LAndExpContext* CACTParser::lAndExp(int precedence) {
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    _localctx = _tracker.createInstance<EqToLAndContext>(_localctx);
-    _ctx = _localctx;
-    previousContext = _localctx;
-
     setState(310);
     eqExp(0);
     _ctx->stop = _input->LT(-1);
@@ -2776,9 +2502,8 @@ CACTParser::LAndExpContext* CACTParser::lAndExp(int precedence) {
         if (!_parseListeners.empty())
           triggerExitRuleEvent();
         previousContext = _localctx;
-        auto newContext = _tracker.createInstance<LAndOpContext>(_tracker.createInstance<LAndExpContext>(parentContext, parentState));
-        _localctx = newContext;
-        pushNewRecursionContext(newContext, startState, RuleLAndExp);
+        _localctx = _tracker.createInstance<LAndExpContext>(parentContext, parentState);
+        pushNewRecursionContext(_localctx, startState, RuleLAndExp);
         setState(312);
 
         if (!(precpred(_ctx, 1))) throw FailedPredicateException(this, "precpred(_ctx, 1)");
@@ -2806,49 +2531,27 @@ CACTParser::LOrExpContext::LOrExpContext(ParserRuleContext *parent, size_t invok
   : ParserRuleContext(parent, invokingState) {
 }
 
+CACTParser::LAndExpContext* CACTParser::LOrExpContext::lAndExp() {
+  return getRuleContext<CACTParser::LAndExpContext>(0);
+}
+
+CACTParser::LOrExpContext* CACTParser::LOrExpContext::lOrExp() {
+  return getRuleContext<CACTParser::LOrExpContext>(0);
+}
+
 
 size_t CACTParser::LOrExpContext::getRuleIndex() const {
   return CACTParser::RuleLOrExp;
 }
 
-void CACTParser::LOrExpContext::copyFrom(LOrExpContext *ctx) {
-  ParserRuleContext::copyFrom(ctx);
-}
 
-//----------------- LOrOpContext ------------------------------------------------------------------
-
-CACTParser::LOrExpContext* CACTParser::LOrOpContext::lOrExp() {
-  return getRuleContext<CACTParser::LOrExpContext>(0);
-}
-
-CACTParser::LAndExpContext* CACTParser::LOrOpContext::lAndExp() {
-  return getRuleContext<CACTParser::LAndExpContext>(0);
-}
-
-CACTParser::LOrOpContext::LOrOpContext(LOrExpContext *ctx) { copyFrom(ctx); }
-
-
-std::any CACTParser::LOrOpContext::accept(tree::ParseTreeVisitor *visitor) {
+std::any CACTParser::LOrExpContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<CACTVisitor*>(visitor))
-    return parserVisitor->visitLOrOp(this);
+    return parserVisitor->visitLOrExp(this);
   else
     return visitor->visitChildren(this);
 }
-//----------------- LAndToLOrContext ------------------------------------------------------------------
 
-CACTParser::LAndExpContext* CACTParser::LAndToLOrContext::lAndExp() {
-  return getRuleContext<CACTParser::LAndExpContext>(0);
-}
-
-CACTParser::LAndToLOrContext::LAndToLOrContext(LOrExpContext *ctx) { copyFrom(ctx); }
-
-
-std::any CACTParser::LAndToLOrContext::accept(tree::ParseTreeVisitor *visitor) {
-  if (auto parserVisitor = dynamic_cast<CACTVisitor*>(visitor))
-    return parserVisitor->visitLAndToLOr(this);
-  else
-    return visitor->visitChildren(this);
-}
 
 CACTParser::LOrExpContext* CACTParser::lOrExp() {
    return lOrExp(0);
@@ -2875,10 +2578,6 @@ CACTParser::LOrExpContext* CACTParser::lOrExp(int precedence) {
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    _localctx = _tracker.createInstance<LAndToLOrContext>(_localctx);
-    _ctx = _localctx;
-    previousContext = _localctx;
-
     setState(321);
     lAndExp(0);
     _ctx->stop = _input->LT(-1);
@@ -2890,9 +2589,8 @@ CACTParser::LOrExpContext* CACTParser::lOrExp(int precedence) {
         if (!_parseListeners.empty())
           triggerExitRuleEvent();
         previousContext = _localctx;
-        auto newContext = _tracker.createInstance<LOrOpContext>(_tracker.createInstance<LOrExpContext>(parentContext, parentState));
-        _localctx = newContext;
-        pushNewRecursionContext(newContext, startState, RuleLOrExp);
+        _localctx = _tracker.createInstance<LOrExpContext>(parentContext, parentState);
+        pushNewRecursionContext(_localctx, startState, RuleLOrExp);
         setState(323);
 
         if (!(precpred(_ctx, 1))) throw FailedPredicateException(this, "precpred(_ctx, 1)");

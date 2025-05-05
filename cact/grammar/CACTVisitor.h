@@ -50,21 +50,7 @@ public:
 
     virtual std::any visitBlockItem(CACTParser::BlockItemContext *context) = 0;
 
-    virtual std::any visitAssignStmt(CACTParser::AssignStmtContext *context) = 0;
-
-    virtual std::any visitExprStmt(CACTParser::ExprStmtContext *context) = 0;
-
-    virtual std::any visitBlockStmt(CACTParser::BlockStmtContext *context) = 0;
-
-    virtual std::any visitReturnStmt(CACTParser::ReturnStmtContext *context) = 0;
-
-    virtual std::any visitIfStmt(CACTParser::IfStmtContext *context) = 0;
-
-    virtual std::any visitWhileStmt(CACTParser::WhileStmtContext *context) = 0;
-
-    virtual std::any visitBreakStmt(CACTParser::BreakStmtContext *context) = 0;
-
-    virtual std::any visitContinueStmt(CACTParser::ContinueStmtContext *context) = 0;
+    virtual std::any visitStmt(CACTParser::StmtContext *context) = 0;
 
     virtual std::any visitExp(CACTParser::ExpContext *context) = 0;
 
@@ -80,35 +66,19 @@ public:
 
     virtual std::any visitPrimaryExp(CACTParser::PrimaryExpContext *context) = 0;
 
-    virtual std::any visitPrimaryUnary(CACTParser::PrimaryUnaryContext *context) = 0;
+    virtual std::any visitUnaryExp(CACTParser::UnaryExpContext *context) = 0;
 
-    virtual std::any visitUnaryOp(CACTParser::UnaryOpContext *context) = 0;
+    virtual std::any visitMulExp(CACTParser::MulExpContext *context) = 0;
 
-    virtual std::any visitFuncCall(CACTParser::FuncCallContext *context) = 0;
+    virtual std::any visitAddExp(CACTParser::AddExpContext *context) = 0;
 
-    virtual std::any visitMulOp(CACTParser::MulOpContext *context) = 0;
+    virtual std::any visitRelExp(CACTParser::RelExpContext *context) = 0;
 
-    virtual std::any visitUnaryToMul(CACTParser::UnaryToMulContext *context) = 0;
+    virtual std::any visitEqExp(CACTParser::EqExpContext *context) = 0;
 
-    virtual std::any visitMulToAdd(CACTParser::MulToAddContext *context) = 0;
+    virtual std::any visitLAndExp(CACTParser::LAndExpContext *context) = 0;
 
-    virtual std::any visitAddOp(CACTParser::AddOpContext *context) = 0;
-
-    virtual std::any visitAddToRel(CACTParser::AddToRelContext *context) = 0;
-
-    virtual std::any visitRelOp(CACTParser::RelOpContext *context) = 0;
-
-    virtual std::any visitEqOp(CACTParser::EqOpContext *context) = 0;
-
-    virtual std::any visitRelToEq(CACTParser::RelToEqContext *context) = 0;
-
-    virtual std::any visitLAndOp(CACTParser::LAndOpContext *context) = 0;
-
-    virtual std::any visitEqToLAnd(CACTParser::EqToLAndContext *context) = 0;
-
-    virtual std::any visitLOrOp(CACTParser::LOrOpContext *context) = 0;
-
-    virtual std::any visitLAndToLOr(CACTParser::LAndToLOrContext *context) = 0;
+    virtual std::any visitLOrExp(CACTParser::LOrExpContext *context) = 0;
 
 
 };

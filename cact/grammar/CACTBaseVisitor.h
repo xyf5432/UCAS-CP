@@ -74,35 +74,7 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitAssignStmt(CACTParser::AssignStmtContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitExprStmt(CACTParser::ExprStmtContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitBlockStmt(CACTParser::BlockStmtContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitReturnStmt(CACTParser::ReturnStmtContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitIfStmt(CACTParser::IfStmtContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitWhileStmt(CACTParser::WhileStmtContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitBreakStmt(CACTParser::BreakStmtContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitContinueStmt(CACTParser::ContinueStmtContext *ctx) override {
+  virtual std::any visitStmt(CACTParser::StmtContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -134,63 +106,31 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitPrimaryUnary(CACTParser::PrimaryUnaryContext *ctx) override {
+  virtual std::any visitUnaryExp(CACTParser::UnaryExpContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitUnaryOp(CACTParser::UnaryOpContext *ctx) override {
+  virtual std::any visitMulExp(CACTParser::MulExpContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitFuncCall(CACTParser::FuncCallContext *ctx) override {
+  virtual std::any visitAddExp(CACTParser::AddExpContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitMulOp(CACTParser::MulOpContext *ctx) override {
+  virtual std::any visitRelExp(CACTParser::RelExpContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitUnaryToMul(CACTParser::UnaryToMulContext *ctx) override {
+  virtual std::any visitEqExp(CACTParser::EqExpContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitMulToAdd(CACTParser::MulToAddContext *ctx) override {
+  virtual std::any visitLAndExp(CACTParser::LAndExpContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitAddOp(CACTParser::AddOpContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitAddToRel(CACTParser::AddToRelContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitRelOp(CACTParser::RelOpContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitEqOp(CACTParser::EqOpContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitRelToEq(CACTParser::RelToEqContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitLAndOp(CACTParser::LAndOpContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitEqToLAnd(CACTParser::EqToLAndContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitLOrOp(CACTParser::LOrOpContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitLAndToLOr(CACTParser::LAndToLOrContext *ctx) override {
+  virtual std::any visitLOrExp(CACTParser::LOrExpContext *ctx) override {
     return visitChildren(ctx);
   }
 

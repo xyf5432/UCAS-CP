@@ -84,14 +84,14 @@ blockItem
 
 // 语句
 stmt
-    : lVal '=' exp ';'                         # assignStmt
-    | (exp)? ';'                               # exprStmt
-    | block                                    # blockStmt
-    | 'return' exp? ';'                        # returnStmt
-    | 'if' '(' cond ')' stmt ('else' stmt)?    # ifStmt
-    | 'while' '(' cond ')' stmt                # whileStmt
-    | 'break' ';'                              # breakStmt
-    | 'continue' ';'                           # continueStmt
+    : lVal '=' exp ';'                         
+    | (exp)? ';'                               
+    | block                                    
+    | 'return' exp? ';'                        
+    | 'if' '(' cond ')' stmt ('else' stmt)?    
+    | 'while' '(' cond ')' stmt                
+    | 'break' ';'                              
+    | 'continue' ';'                           
     ;
 
 // 表达式
@@ -135,45 +135,45 @@ primaryExp
 
 // 单目表达式
 unaryExp
-    : primaryExp                                                                       # primaryUnary
-    | ('+' | '-' | '!') unaryExp                                                       # unaryOp
-    | Ident '(' (funcRParams)? ')'                                                     # funcCall
+    : primaryExp                                     
+    | ('+' | '-' | '!') unaryExp                     
+    | Ident '(' (funcRParams)? ')'                   
     ;
 
 // 乘除模表达式
 mulExp
-    : unaryExp                                                                         # unaryToMul
-    | mulExp ('*' | '/' | '%') unaryExp                                               # mulOp
+    : unaryExp                                       
+    | mulExp ('*' | '/' | '%') unaryExp              
     ;
 
 // 加减表达式
 addExp
-    : mulExp                                                                           # mulToAdd
-    | addExp ('+' | '-') mulExp                                                       # addOp
+    : mulExp                                         
+    | addExp ('+' | '-') mulExp                      
     ;
 
 // 关系表达式
 relExp
-    : addExp                                                                           # addToRel
-    | relExp ('<' | '>' | '<=' | '>=') addExp                                         # relOp
+    : addExp                                         
+    | relExp ('<' | '>' | '<=' | '>=') addExp        
     ;
 
 // 相等性表达式
 eqExp
-    : relExp                                                                           # relToEq
-    | eqExp ('==' | '!=') relExp                                                      # eqOp
+    : relExp                                         
+    | eqExp ('==' | '!=') relExp                     
     ;
 
 // 逻辑与表达式
 lAndExp
-    : eqExp                                                                            # eqToLAnd
-    | lAndExp '&&' eqExp                                                              # lAndOp
+    : eqExp                                          
+    | lAndExp '&&' eqExp                             
     ;
 
 // 逻辑或表达式
 lOrExp
-    : lAndExp                                                                          # lAndToLOr
-    | lOrExp '||' lAndExp                                                             # lOrOp
+    : lAndExp                                        
+    | lOrExp '||' lAndExp                            
     ;
 
 
@@ -201,7 +201,6 @@ FloatConst
 CharConst
     : '\'' (EscapeChar | ~['\\\r\n]) '\''
     ;
-
 
 // 空白和注释
 NewLine
