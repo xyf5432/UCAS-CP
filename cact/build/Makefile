@@ -117,6 +117,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named intrinsics_gen
+
+# Build rule for target.
+intrinsics_gen: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 intrinsics_gen
+.PHONY : intrinsics_gen
+
+# fast build rule for target.
+intrinsics_gen/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/intrinsics_gen.dir/build.make CMakeFiles/intrinsics_gen.dir/build
+.PHONY : intrinsics_gen/fast
+
+#=============================================================================
 # Target rules for targets named antlr
 
 # Build rule for target.
@@ -3598,6 +3611,54 @@ grammar/hello/HelloVisitor.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/grammar/hello/HelloVisitor.cpp.s
 .PHONY : grammar/hello/HelloVisitor.cpp.s
 
+src/Analysis.o: src/Analysis.cpp.o
+.PHONY : src/Analysis.o
+
+# target to build an object file
+src/Analysis.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/src/Analysis.cpp.o
+.PHONY : src/Analysis.cpp.o
+
+src/Analysis.i: src/Analysis.cpp.i
+.PHONY : src/Analysis.i
+
+# target to preprocess a source file
+src/Analysis.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/src/Analysis.cpp.i
+.PHONY : src/Analysis.cpp.i
+
+src/Analysis.s: src/Analysis.cpp.s
+.PHONY : src/Analysis.s
+
+# target to generate assembly for a file
+src/Analysis.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/src/Analysis.cpp.s
+.PHONY : src/Analysis.cpp.s
+
+src/IR.o: src/IR.cpp.o
+.PHONY : src/IR.o
+
+# target to build an object file
+src/IR.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/src/IR.cpp.o
+.PHONY : src/IR.cpp.o
+
+src/IR.i: src/IR.cpp.i
+.PHONY : src/IR.i
+
+# target to preprocess a source file
+src/IR.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/src/IR.cpp.i
+.PHONY : src/IR.cpp.i
+
+src/IR.s: src/IR.cpp.s
+.PHONY : src/IR.s
+
+# target to generate assembly for a file
+src/IR.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/src/IR.cpp.s
+.PHONY : src/IR.cpp.s
+
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
@@ -3654,6 +3715,7 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... intrinsics_gen"
 	@echo "... antlr"
 	@echo "... compiler"
 	@echo "... deps/antlr4-runtime/ANTLRErrorListener.o"
@@ -4088,6 +4150,12 @@ help:
 	@echo "... grammar/hello/HelloVisitor.o"
 	@echo "... grammar/hello/HelloVisitor.i"
 	@echo "... grammar/hello/HelloVisitor.s"
+	@echo "... src/Analysis.o"
+	@echo "... src/Analysis.i"
+	@echo "... src/Analysis.s"
+	@echo "... src/IR.o"
+	@echo "... src/IR.i"
+	@echo "... src/IR.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

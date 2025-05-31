@@ -1,0 +1,21 @@
+; ModuleID = 'CACT_module'
+source_filename = "CACT_module"
+
+declare void @print_int(i32)
+
+declare void @print_float(float)
+
+declare void @print_char(i8)
+
+declare i32 @get_int()
+
+declare float @get_float()
+
+declare i8 @get_char()
+
+define i32 @main() {
+entry:
+  %a = alloca i32
+  store i32 0, i32* %a
+  ret i32 0
+}

@@ -56,3 +56,41 @@ FunType stringToFunType(const std::string& typeStr) {
 
     throw std::invalid_argument("Invalid FunType: " + typeStr);
 }
+
+std::string FunTypeTostring(const FunType& FunType) {
+    if (FunType == FunType::INT)    return "int";
+    if (FunType == FunType::FLOAT)  return "float";
+    if (FunType == FunType::CHAR)   return "char";
+    if (FunType == FunType::VOID)  return "void";
+
+    throw std::invalid_argument("Invalid FunType");
+}
+
+bool isSameType(const SymType& type1, const SymType& type2) {
+    if (type1.base_type != type2.base_type) {
+        return false;
+    }
+
+    if (type1.is_array != type2.is_array) {
+        return false;
+    }
+
+    if (type1.is_array) {
+        // 检查维度数量相同
+        if (type1.array_dims.size() != type2.array_dims.size()) {
+            return false;
+        }
+        // 检查每个维度大小相同
+        if (type1.array_dims[0] != type2.array_dims[0] 
+            && type1.array_dims[0] != -1 && type1.array_dims[1] != -1) {
+            return false;
+        }
+        for (size_t i = 1; i < type1.array_dims.size(); ++i) {
+            if (type1.array_dims[i] != type2.array_dims[i]) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}

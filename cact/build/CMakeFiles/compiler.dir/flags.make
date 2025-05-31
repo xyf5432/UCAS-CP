@@ -6,5 +6,5 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -I/home/compiler14/cact/deps/antlr4-runtime -I/home/compiler14/cact/grammar -I/home/compiler14/cact/src
 
-CXX_FLAGS =   -w -g -pthread -std=gnu++17
+CXX_FLAGS =   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -w -g -pthread -std=gnu++17
 

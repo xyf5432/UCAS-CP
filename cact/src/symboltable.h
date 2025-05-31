@@ -4,11 +4,14 @@
 #include <string>
 #include <stdexcept>
 
+#include "llvm/IR/Value.h" 
+
 struct SymType {
     std::string base_type;       // 基础类型（如 "int"）
     bool is_array;       // 是否为数组
-    std::vector<int> array_dims; // 数组维度（空表示不完整数组）
+    std::vector<int> array_dims; // 数组维度
     bool is_const;       // 可选：是否常量
+    llvm::Value* value; 
 };
 
 enum class FunType { INT, FLOAT, CHAR, VOID };
@@ -126,3 +129,6 @@ private:
 };
 
 FunType stringToFunType(const std::string& typeStr) ;
+std::string FunTypeTostring(const FunType& FunType) ;
+
+bool isSameType(const SymType& type1, const SymType& type2) ;

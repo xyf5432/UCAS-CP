@@ -181,10 +181,38 @@ CMakeFiles/compiler.dir/grammar/hello/HelloVisitor.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/compiler.dir/grammar/hello/HelloVisitor.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/compiler14/cact/grammar/hello/HelloVisitor.cpp -o CMakeFiles/compiler.dir/grammar/hello/HelloVisitor.cpp.s
 
+CMakeFiles/compiler.dir/src/Analysis.cpp.o: CMakeFiles/compiler.dir/flags.make
+CMakeFiles/compiler.dir/src/Analysis.cpp.o: ../src/Analysis.cpp
+CMakeFiles/compiler.dir/src/Analysis.cpp.o: CMakeFiles/compiler.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/compiler14/cact/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/compiler.dir/src/Analysis.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/compiler.dir/src/Analysis.cpp.o -MF CMakeFiles/compiler.dir/src/Analysis.cpp.o.d -o CMakeFiles/compiler.dir/src/Analysis.cpp.o -c /home/compiler14/cact/src/Analysis.cpp
+
+CMakeFiles/compiler.dir/src/Analysis.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/compiler.dir/src/Analysis.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/compiler14/cact/src/Analysis.cpp > CMakeFiles/compiler.dir/src/Analysis.cpp.i
+
+CMakeFiles/compiler.dir/src/Analysis.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/compiler.dir/src/Analysis.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/compiler14/cact/src/Analysis.cpp -o CMakeFiles/compiler.dir/src/Analysis.cpp.s
+
+CMakeFiles/compiler.dir/src/IR.cpp.o: CMakeFiles/compiler.dir/flags.make
+CMakeFiles/compiler.dir/src/IR.cpp.o: ../src/IR.cpp
+CMakeFiles/compiler.dir/src/IR.cpp.o: CMakeFiles/compiler.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/compiler14/cact/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/compiler.dir/src/IR.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/compiler.dir/src/IR.cpp.o -MF CMakeFiles/compiler.dir/src/IR.cpp.o.d -o CMakeFiles/compiler.dir/src/IR.cpp.o -c /home/compiler14/cact/src/IR.cpp
+
+CMakeFiles/compiler.dir/src/IR.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/compiler.dir/src/IR.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/compiler14/cact/src/IR.cpp > CMakeFiles/compiler.dir/src/IR.cpp.i
+
+CMakeFiles/compiler.dir/src/IR.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/compiler.dir/src/IR.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/compiler14/cact/src/IR.cpp -o CMakeFiles/compiler.dir/src/IR.cpp.s
+
 CMakeFiles/compiler.dir/src/main.cpp.o: CMakeFiles/compiler.dir/flags.make
 CMakeFiles/compiler.dir/src/main.cpp.o: ../src/main.cpp
 CMakeFiles/compiler.dir/src/main.cpp.o: CMakeFiles/compiler.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/compiler14/cact/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/compiler.dir/src/main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/compiler14/cact/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/compiler.dir/src/main.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/compiler.dir/src/main.cpp.o -MF CMakeFiles/compiler.dir/src/main.cpp.o.d -o CMakeFiles/compiler.dir/src/main.cpp.o -c /home/compiler14/cact/src/main.cpp
 
 CMakeFiles/compiler.dir/src/main.cpp.i: cmake_force
@@ -198,7 +226,7 @@ CMakeFiles/compiler.dir/src/main.cpp.s: cmake_force
 CMakeFiles/compiler.dir/src/symboltable.cpp.o: CMakeFiles/compiler.dir/flags.make
 CMakeFiles/compiler.dir/src/symboltable.cpp.o: ../src/symboltable.cpp
 CMakeFiles/compiler.dir/src/symboltable.cpp.o: CMakeFiles/compiler.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/compiler14/cact/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/compiler.dir/src/symboltable.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/compiler14/cact/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/compiler.dir/src/symboltable.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/compiler.dir/src/symboltable.cpp.o -MF CMakeFiles/compiler.dir/src/symboltable.cpp.o.d -o CMakeFiles/compiler.dir/src/symboltable.cpp.o -c /home/compiler14/cact/src/symboltable.cpp
 
 CMakeFiles/compiler.dir/src/symboltable.cpp.i: cmake_force
@@ -219,6 +247,8 @@ compiler_OBJECTS = \
 "CMakeFiles/compiler.dir/grammar/hello/HelloLexer.cpp.o" \
 "CMakeFiles/compiler.dir/grammar/hello/HelloParser.cpp.o" \
 "CMakeFiles/compiler.dir/grammar/hello/HelloVisitor.cpp.o" \
+"CMakeFiles/compiler.dir/src/Analysis.cpp.o" \
+"CMakeFiles/compiler.dir/src/IR.cpp.o" \
 "CMakeFiles/compiler.dir/src/main.cpp.o" \
 "CMakeFiles/compiler.dir/src/symboltable.cpp.o"
 
@@ -233,12 +263,56 @@ compiler: CMakeFiles/compiler.dir/grammar/hello/HelloBaseVisitor.cpp.o
 compiler: CMakeFiles/compiler.dir/grammar/hello/HelloLexer.cpp.o
 compiler: CMakeFiles/compiler.dir/grammar/hello/HelloParser.cpp.o
 compiler: CMakeFiles/compiler.dir/grammar/hello/HelloVisitor.cpp.o
+compiler: CMakeFiles/compiler.dir/src/Analysis.cpp.o
+compiler: CMakeFiles/compiler.dir/src/IR.cpp.o
 compiler: CMakeFiles/compiler.dir/src/main.cpp.o
 compiler: CMakeFiles/compiler.dir/src/symboltable.cpp.o
 compiler: CMakeFiles/compiler.dir/build.make
 compiler: libantlr.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMCore.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMSupport.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMIRReader.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMAnalysis.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMExecutionEngine.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMMC.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMObject.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMRuntimeDyld.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMTransformUtils.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMBitReader.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMBitWriter.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMLinker.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMTarget.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMPasses.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMCodeGen.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMTarget.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMipo.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMIRReader.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMAsmParser.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMBitWriter.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMLinker.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMInstrumentation.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMScalarOpts.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMAggressiveInstCombine.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMInstCombine.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMVectorize.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMTransformUtils.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMAnalysis.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMObject.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMBitReader.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMMCParser.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMMC.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMDebugInfoCodeView.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMDebugInfoMSF.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMTextAPI.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMProfileData.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMCore.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMBinaryFormat.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMRemarks.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMBitstreamReader.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMSupport.a
+compiler: /home/compiler14/llvm-10/lib/libLLVMDemangle.a
 compiler: CMakeFiles/compiler.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/compiler14/cact/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Linking CXX executable compiler"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/compiler14/cact/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Linking CXX executable compiler"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/compiler.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

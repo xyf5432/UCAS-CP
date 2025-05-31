@@ -16,6 +16,8 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/compiler14/cact/grammar/hello/HelloLexer.cpp" "CMakeFiles/compiler.dir/grammar/hello/HelloLexer.cpp.o" "gcc" "CMakeFiles/compiler.dir/grammar/hello/HelloLexer.cpp.o.d"
   "/home/compiler14/cact/grammar/hello/HelloParser.cpp" "CMakeFiles/compiler.dir/grammar/hello/HelloParser.cpp.o" "gcc" "CMakeFiles/compiler.dir/grammar/hello/HelloParser.cpp.o.d"
   "/home/compiler14/cact/grammar/hello/HelloVisitor.cpp" "CMakeFiles/compiler.dir/grammar/hello/HelloVisitor.cpp.o" "gcc" "CMakeFiles/compiler.dir/grammar/hello/HelloVisitor.cpp.o.d"
+  "/home/compiler14/cact/src/Analysis.cpp" "CMakeFiles/compiler.dir/src/Analysis.cpp.o" "gcc" "CMakeFiles/compiler.dir/src/Analysis.cpp.o.d"
+  "/home/compiler14/cact/src/IR.cpp" "CMakeFiles/compiler.dir/src/IR.cpp.o" "gcc" "CMakeFiles/compiler.dir/src/IR.cpp.o.d"
   "/home/compiler14/cact/src/main.cpp" "CMakeFiles/compiler.dir/src/main.cpp.o" "gcc" "CMakeFiles/compiler.dir/src/main.cpp.o.d"
   "/home/compiler14/cact/src/symboltable.cpp" "CMakeFiles/compiler.dir/src/symboltable.cpp.o" "gcc" "CMakeFiles/compiler.dir/src/symboltable.cpp.o.d"
   )

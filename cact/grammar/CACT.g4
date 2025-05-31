@@ -184,15 +184,15 @@ Ident
     ;
 
 IntConst
-    : [+-]? DecimalConst
-    | [+-]? OctalConst
-    | [+-]? HexadecConst
+    : HexadecConst
+    | OctalConst
+    | DecimalConst
     ;
 
 FloatConst
-    : ([+-]? Digit+ '.' Digit*    // 普通形式：如123.45、123.
-    | [+-]? '.' Digit+          // 普通形式：如.45
-    | [+-]? ( ( Digit+ ('.' Digit*)? | '.' Digit+ ) // 基数部分
+    : (Digit+ '.' Digit*    // 普通形式：如123.45、123.
+    | '.' Digit+          // 普通形式：如.45
+    | ( ( Digit+ ('.' Digit*)? | '.' Digit+ ) // 基数部分
           [Ee] [+-]? Digit+))                     // 指数部分
       [fF]?
     ;
@@ -230,7 +230,7 @@ fragment DecimalConst
     ;
 
 fragment OctalConst
-    : '0' [0-7]*
+    : '0' [0-7]+
     ;
 
 fragment HexadecConst
