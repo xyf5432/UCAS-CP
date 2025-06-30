@@ -1,6 +1,9 @@
 ; ModuleID = 'CACT_module'
 source_filename = "CACT_module"
 
+@a = global i32 -1
+@b = global i32 1
+
 declare void @print_int(i32)
 
 declare void @print_float(float)
@@ -13,9 +16,109 @@ declare float @get_float()
 
 declare i8 @get_char()
 
+define i32 @inc_a() {
+entry:
+  %b = alloca i32
+  store i32 0, i32* %b
+  %a.val = load i32, i32* @a
+  store i32 %a.val, i32* %b
+  %b.val = load i32, i32* %b
+  %add_tmp = add i32 %b.val, 1
+  store i32 %add_tmp, i32* %b
+  %b.val1 = load i32, i32* %b
+  store i32 %b.val1, i32* @a
+  %a.val2 = load i32, i32* @a
+  ret i32 %a.val2
+}
+
 define i32 @main() {
 entry:
-  %a = alloca i32
-  store i32 0, i32* %a
-  ret i32 0
+  %k = alloca i32
+  store i32 5, i32* %k
+  br label %while.cond
+
+while.cond:                                       ; preds = %if.merge20, %entry
+  %k.val = load i32, i32* %k
+  %cmptmp = icmp sge i32 %k.val, 0
+  br i1 %cmptmp, label %while.body, label %while.end
+
+while.body:                                       ; preds = %while.cond
+  %calltmp = call i32 @inc_a()
+  %netmp = icmp ne i32 %calltmp, 0
+  br i1 %netmp, label %and.rhs, label %and.end
+
+and.rhs:                                          ; preds = %while.body
+  %calltmp1 = call i32 @inc_a()
+  %netmp2 = icmp ne i32 %calltmp1, 0
+  br label %and.end
+
+and.end:                                          ; preds = %and.rhs, %while.body
+  %and.result = phi i1 [ false, %while.body ], [ %netmp2, %and.rhs ]
+  br i1 %and.result, label %and.rhs3, label %and.end4
+
+and.rhs3:                                         ; preds = %and.end
+  %calltmp5 = call i32 @inc_a()
+  %netmp6 = icmp ne i32 %calltmp5, 0
+  br label %and.end4
+
+and.end4:                                         ; preds = %and.rhs3, %and.end
+  %and.result7 = phi i1 [ false, %and.end ], [ %netmp6, %and.rhs3 ]
+  br i1 %and.result7, label %if.then, label %if.merge
+
+if.then:                                          ; preds = %and.end4
+  %a.val = load i32, i32* @a
+  %b.val = load i32, i32* @b
+  %add_tmp = add i32 %a.val, %b.val
+  store i32 %add_tmp, i32* @a
+  br label %if.merge
+
+if.merge:                                         ; preds = %if.then, %and.end4
+  %calltmp8 = call i32 @inc_a()
+  %cmptmp9 = icmp slt i32 %calltmp8, 14
+  br i1 %cmptmp9, label %or.end, label %or.rhs
+
+or.rhs:                                           ; preds = %if.merge
+  %calltmp10 = call i32 @inc_a()
+  %netmp11 = icmp ne i32 %calltmp10, 0
+  br i1 %netmp11, label %and.rhs12, label %and.end13
+
+or.end:                                           ; preds = %and.end13, %if.merge
+  %or.result = phi i1 [ true, %if.merge ], [ %and.result18, %and.end13 ]
+  br i1 %or.result, label %if.then19, label %if.else
+
+and.rhs12:                                        ; preds = %or.rhs
+  %calltmp14 = call i32 @inc_a()
+  %calltmp15 = call i32 @inc_a()
+  %sub_tmp = sub i32 %calltmp14, %calltmp15
+  %add_tmp16 = add i32 %sub_tmp, 1
+  %netmp17 = icmp ne i32 %add_tmp16, 0
+  br label %and.end13
+
+and.end13:                                        ; preds = %and.rhs12, %or.rhs
+  %and.result18 = phi i1 [ false, %or.rhs ], [ %netmp17, %and.rhs12 ]
+  br label %or.end
+
+if.then19:                                        ; preds = %or.end
+  %b.val21 = load i32, i32* @b
+  store i32 %b.val21, i32* @a
+  %b.val22 = load i32, i32* @b
+  %mul_tmp = mul i32 %b.val22, 2
+  store i32 %mul_tmp, i32* @b
+  br label %if.merge20
+
+if.else:                                          ; preds = %or.end
+  %calltmp23 = call i32 @inc_a()
+  br label %if.merge20
+
+if.merge20:                                       ; preds = %if.else, %if.then19
+  %k.val24 = load i32, i32* %k
+  %sub_tmp25 = sub i32 %k.val24, 1
+  store i32 %sub_tmp25, i32* %k
+  br label %while.cond
+
+while.end:                                        ; preds = %while.cond
+  %a.val26 = load i32, i32* @a
+  %b.val27 = load i32, i32* @b
+  %add_tmp28 = add i32 %a.val26, %b.val27
+  ret i32 %add_tmp28
 }

@@ -95,7 +95,7 @@ bool Analysis::checkMultiDimInit(const SymType& arrayType,
 
 std::any Analysis::visitCompUnit(CACTParser::CompUnitContext *ctx) {
     auto result = visitChildren(ctx);
-
+    std::cout << "analysis done" << std::endl;
     llvm::Module* module = irGen->getModule();
     module->print(llvm::outs(), nullptr);
 
@@ -705,7 +705,7 @@ std::any Analysis::visitVarDecl(CACTParser::VarDeclContext *ctx) {
             } else {
                 // 数组类型初始化
                 auto initList = constInitValCtx->constInitVal();
-                
+                //std::cout << "1" << std::endl;
                 // 检查是否为扁平化初始化（所有初始化项都是基本类型）
                 bool isFlatInit = true;
                 for (auto initVal : initList) {
@@ -714,7 +714,7 @@ std::any Analysis::visitVarDecl(CACTParser::VarDeclContext *ctx) {
                         break;
                     }
                 }
-
+                //std::cout << "2" << std::endl;
                 auto& builder = irGen->getBuilder();
                 if (isFlatInit) {
                     // 扁平化初始化 - 检查元素数量
@@ -727,7 +727,7 @@ std::any Analysis::visitVarDecl(CACTParser::VarDeclContext *ctx) {
                                     << capacity << std::endl;
                         exit(1);
                     }
-                    
+                    //std::cout << "3" << std::endl;
                     // 检查类型并收集初始化值
                     std::vector<llvm::Constant*> initValues;
                     for (auto initVal : initList) {
@@ -743,12 +743,12 @@ std::any Analysis::visitVarDecl(CACTParser::VarDeclContext *ctx) {
                         }
                         initValues.push_back(llvm::cast<llvm::Constant>(expResult.second));
                     }
-                    
+                    //std::cout << "4" << std::endl;
                     llvm::Constant* zero = llvm::Constant::getNullValue(irGen->getLLVMType(varType.base_type));
                     while (initValues.size() < capacity) {
                         initValues.push_back(zero);
                     }
-
+                    //std::cout << "5" << std::endl;
                     llvm::Type* elemType = irGen->getLLVMType(varType.base_type);
                     
                     // 创建数组类型
@@ -756,7 +756,7 @@ std::any Analysis::visitVarDecl(CACTParser::VarDeclContext *ctx) {
 
                     // 存入符号表
                     current->insertsym(Ident, varType);
-                    
+                    //std::cout << "6" << std::endl;
                     // 处理全局变量和局部变量的不同情况
                     if (current->scopeLevel==0) {
                         llvm::Constant* init = createNestedArrayInitializer(elemType, varType.array_dims, initValues);
@@ -802,8 +802,14 @@ std::any Analysis::visitVarDecl(CACTParser::VarDeclContext *ctx) {
                                 
                             builder.CreateStore(initValues[i], elemPtr);
                         }
+
+                        // 在符号表中保存LLVM值
+                        if (auto symEntry = current->lookupsym(Ident)) {
+                            const_cast<SymEntry*>(symEntry)->type.value = arrayAlloc;
+                        }
                     }
                 } else {
+                    //std::cout << "7" << std::endl;
                     // 多维初始化
                     if (!checkMultiDimInit(varType, constInitValCtx, 0)) {
                         std::cerr << "Error at line " << ctx->getStart()->getLine() 
@@ -816,7 +822,7 @@ std::any Analysis::visitVarDecl(CACTParser::VarDeclContext *ctx) {
 
                     // 存入符号表
                     current->insertsym(Ident, varType);
-
+                    //std::cout << "8" << std::endl;
                     if (current->scopeLevel==0) {
                         std::vector<llvm::Constant*> initValues;
                         generateNestedArrayInit(varType, varDefCtx->constInitVal(), initValues, 0);
@@ -861,9 +867,27 @@ std::any Analysis::visitVarDecl(CACTParser::VarDeclContext *ctx) {
             }
         }
         
-
+        //std::cout << "9" << std::endl;
         //std::cout << "varDef Ident: " << Ident << ", Type: " \
                   << (varType.is_array ? "array of " : "") << varType.base_type << std::endl;
+        /*std::cout << "DEBUG: After processing VarDef for '" << Ident << "'" << std::endl;
+        const SymEntry* entry = current->lookupsym(Ident);
+        //std::cout << "1" << std::endl;
+        if (entry) {
+            //std::cout << "2" << std::endl;
+            if (entry->type.value) {
+                //std::cout << "3" << std::endl;
+                std::cout << "  - SymbolTable value is VALID. LLVM Value is: ";
+                //std::cout << "4" << std::endl;
+                entry->type.value->print(llvm::outs());
+                //std::cout << "5" << std::endl;
+                std::cout << std::endl;
+            } else {
+                std::cout << "  - SymbolTable value is NULLPTR!" << std::endl;
+            }
+        } else {
+            std::cout << "  - Symbol not found in table (this should not happen)" << std::endl;
+        }*/
     }
     return nullptr;
 }
@@ -997,7 +1021,7 @@ std::any Analysis::visitBlock(CACTParser::BlockContext *ctx) {
     current = current->enterScope();
 
     auto* func_def = dynamic_cast<CACTParser::FuncDefContext*>(ctx->parent);
-    auto* stmtctx = dynamic_cast<CACTParser::StmtContext*>(ctx->parent);
+    //auto* stmtctx = dynamic_cast<CACTParser::StmtContext*>(ctx->parent);
 
     // 2. 处理函数参数（如果是函数体块）
     llvm::Function* currentFunction = irGen->getFunction(current_funname.top());
@@ -1084,6 +1108,8 @@ std::any Analysis::visitStmt(CACTParser::StmtContext *ctx) {
     //std::cout << "visit Stmt" << std::endl;
     auto& builder = irGen->getBuilder();
     llvm::Function* currentFunc = builder.GetInsertBlock()->getParent();
+
+    std::string word = ctx->children[0]->getText();
     
     if (ctx->lVal()) {
         // 赋值语句: lVal '=' exp ';'
@@ -1120,12 +1146,12 @@ std::any Analysis::visitStmt(CACTParser::StmtContext *ctx) {
         // 块语句: block
         visitBlock(ctx->block());
     }
-    else if (ctx->stmt(0) && (ctx->getText().find("if") == 0)) {
+    else if (ctx->stmt(0) && word == "if") {
         // if语句: 'if' '(' cond ')' stmt ('else' stmt)?
         //std::cout << "If condition" << std::endl;
         auto condResult = std::any_cast<std::pair<SymType, llvm::Value*>>(visitCond(ctx->cond()));
         SymType condType = condResult.first;
-        
+        //std::cout << "?" << std::endl;
         if (!isSameType(condType, Bool)) {
             std::cerr << "If condition must be boolean" << std::endl;
             exit(1);
@@ -1144,20 +1170,20 @@ std::any Analysis::visitStmt(CACTParser::StmtContext *ctx) {
         } else {
             builder.CreateCondBr(condValue, thenBB, mergeBB);
         }
-        
+        //std::cout << "??" << std::endl;
         // 生成then块
         builder.SetInsertPoint(thenBB);
         //llvm::Value* one = llvm::ConstantInt::get(builder.getInt32Ty(), 1);
         //builder.CreateStore(one, condValue);
         llvm::BasicBlock* currentBB = builder.GetInsertBlock();
-        if (currentBB) {
+        //if (currentBB) {
             //std::cout << "Current BB: " << currentBB->getName().str() << std::endl;
-        }else{
-            
-        }
+        //}else{
+        //    
+        //}
         visitStmt(ctx->stmt(0));
         builder.CreateBr(mergeBB);
-        
+        //std::cout << "???" << std::endl;
         // 生成else块（如果有）
         if (elseBB) {
             builder.SetInsertPoint(elseBB);
@@ -1209,17 +1235,20 @@ std::any Analysis::visitStmt(CACTParser::StmtContext *ctx) {
         // 恢复循环信息
         irGen->popLoop();
     }
-    else if (ctx->getText().find("return") != -1) {
+    else if (word == "return") {
+        //std::cout << "visit return" << std::endl;
         // 返回语句: 'return' exp? ';'
         if (ctx->exp()) {
+            //std::cout << "1" << std::endl;
             auto expResult = std::any_cast<std::pair<SymType, llvm::Value*>>(visitExp(ctx->exp()));
+            //std::cout << "2" << std::endl;
             SymType retType = expResult.first;
             
             if (retType.is_array) {
                 std::cerr << "wrong return type"<< std::endl;
                 exit(1);
             }
-            
+            //std::cout << "3" << std::endl;
             FunType retfuntype = stringToFunType(retType.base_type);
             if (retfuntype != current_rettype.top()) {
                 std::cerr << "wrong return type" << std::endl;
@@ -1229,6 +1258,7 @@ std::any Analysis::visitStmt(CACTParser::StmtContext *ctx) {
             // 生成IR代码
             llvm::Value* retValue = expResult.second;
             builder.CreateRet(retValue);
+            //std::cout << "4" << std::endl;
         } else {
             if (FunType::VOID != current_rettype.top()) {
                 std::cerr << "Empty return in non-void function" << std::endl;
@@ -1238,8 +1268,9 @@ std::any Analysis::visitStmt(CACTParser::StmtContext *ctx) {
             builder.CreateRetVoid();
         }
         return_exist = 1;
+        //std::cout << "visit return done" << std::endl;
     }
-    else if (ctx->getText().find("break") != -1) {
+    else if (word == "break") {
         // break语句: 'break' ';'
         if (inLoop <= 0) {
             std::cerr << "Break statement outside loop" << std::endl;
@@ -1250,7 +1281,7 @@ std::any Analysis::visitStmt(CACTParser::StmtContext *ctx) {
         auto loopInfo = irGen->getCurrentLoop();
         builder.CreateBr(loopInfo.endBB);
     } 
-    else if (ctx->getText().find("continue") != -1) {
+    else if (word == "continue") {
         // continue语句: 'continue' ';'
         if (inLoop <= 0) {
             std::cerr << "Continue statement outside loop" << std::endl;
@@ -1279,47 +1310,20 @@ std::any Analysis::visitConstExp(CACTParser::ConstExpContext *ctx) {
 }
 
 std::any Analysis::visitCond(CACTParser::CondContext *ctx) {
-    //std::cout << "visit Cond" << std::endl;
-    auto Info = std::any_cast<std::pair<SymType, llvm::Value*>>(visitLOrExp(ctx->lOrExp()));
-    SymType Type = Info.first;
-    llvm::Value* Val = Info.second;
-    
-    auto& builder = irGen->getBuilder();
-    llvm::Value* boolResult = nullptr;
+    // 1. 正常访问 lOrExp，获取其结果
+    auto lorResult = std::any_cast<std::pair<SymType, llvm::Value*>>(visitLOrExp(ctx->lOrExp()));
 
-    // 根据不同类型生成比较零值的指令
-    if (Type.base_type == "int" || Type.base_type == "char") {
-        // 整型/字符型：与0比较
-        boolResult = builder.CreateICmpNE(
-            Val, 
-            Type.base_type == "int" ? builder.getInt32(0) : builder.getInt8('\0'),
-            "cmp_ne_zero"
-        );
-    } 
-    else if (Type.base_type == "float") {
-        // 浮点型：与0.0比较（需要考虑浮点精度）
-        boolResult = builder.CreateFCmpONE(
-            Val,
-            llvm::ConstantFP::get(builder.getFloatTy(), 0.0),
-            "cmp_fp_ne_zero"
-        );
-    }
-    else if (Type.base_type == "bool") {
-        // 已经是布尔类型则直接使用
-        boolResult = Val;
-    }
-    else {
-        std::cerr << "Error: Invalid condition type '" << Type.base_type << "'" << std::endl;
-        exit(1);
-    }
+    // 2. 调用辅助函数将其转换为布尔类型
+    auto boolResultPair = convertToBool(lorResult.first, lorResult.second);
 
-    return std::make_pair(Bool, boolResult);
+    // 3. 直接返回转换后的结果
+    return boolResultPair;
 }
 
 std::any Analysis::visitLVal(CACTParser::LValContext *ctx) {
     //std::cout << "visit LVal" << std::endl;
     auto& builder = irGen->getBuilder();
-    
+    //std::cout << "1" << std::endl;
     // 1. 查找符号
     std::string identName = ctx->Ident()->getText();
     const SymEntry* symbol = current->lookupsym(identName);
@@ -1337,7 +1341,7 @@ std::any Analysis::visitLVal(CACTParser::LValContext *ctx) {
         std::cerr << "Error: No LLVM value for symbol '" << identName << "'" << std::endl;
         exit(1);
     }
-
+    //std::cout << "2" << std::endl;
     // 2. 处理数组访问（如果有索引）
     auto indices = ctx->exp(); // 所有索引表达式
     llvm::Value* finalAddr = baseAddr;
@@ -1349,7 +1353,7 @@ std::any Analysis::visitLVal(CACTParser::LValContext *ctx) {
             std::cerr << "Error: '" << identName << "' is not an array" << std::endl;
             exit(1);
         }
-
+        //std::cout << "2.2" << std::endl;
         // 2.2 检查索引数量是否超过维度
         if (indices.size() > type.array_dims.size()) {
             std::cerr << "Error: Array '" << identName << "' has " 
@@ -1357,11 +1361,11 @@ std::any Analysis::visitLVal(CACTParser::LValContext *ctx) {
                      << indices.size() << " index(es) provided" << std::endl;
             exit(1);
         }
-
+        //std::cout << "2.3" << std::endl;
         // 2.3 生成GEP指令计算元素地址
         std::vector<llvm::Value*> gepIndices;
         gepIndices.push_back(llvm::ConstantInt::get(builder.getInt32Ty(), 0)); // 第一个索引固定为0
-
+        //std::cout << "1" << std::endl;
         for (auto indexExpr : indices) {
             // 检查索引类型
             auto expResult = std::any_cast<std::pair<SymType, llvm::Value*>>(visitExp(indexExpr));
@@ -1381,7 +1385,23 @@ std::any Analysis::visitLVal(CACTParser::LValContext *ctx) {
             
             gepIndices.push_back(indexVal);
         }
-
+        //std::cout << "2" << std::endl;
+        /*std::cout << "DEBUG: GEP for " << identName << " at line " << ctx->getStart()->getLine() << std::endl;
+        std::cout << "  - Base address (baseAddr): ";
+        baseAddr->print(llvm::outs());
+        std::cout << std::endl;
+        std::cout << "  - Base address type: ";
+        baseAddr->getType()->print(llvm::outs());
+        std::cout << std::endl;
+        std::cout << "  - Pointer element type for GEP: ";
+        baseAddr->getType()->getPointerElementType()->print(llvm::outs());
+        std::cout << std::endl;
+        std::cout << "  - GEP indices: ";
+        for (auto* idx : gepIndices) {
+            idx->print(llvm::outs());
+            std::cout << ", ";
+        }
+        std::cout << std::endl;*/
         // 生成GEP指令
         finalAddr = builder.CreateInBoundsGEP(
             baseAddr->getType()->getPointerElementType(),
@@ -1389,7 +1409,7 @@ std::any Analysis::visitLVal(CACTParser::LValContext *ctx) {
             gepIndices,
             "arrayidx"
         );
-
+        //std::cout << "2.4" << std::endl;
         // 2.4 更新返回类型（减少维度）
         if (indices.size() == type.array_dims.size()) {
             // 完全索引（如 arr[1][2] → 返回元素类型）
@@ -1405,7 +1425,7 @@ std::any Analysis::visitLVal(CACTParser::LValContext *ctx) {
             finalType = irGen->getLLVMType(type);
         }
     }
-
+    //std::cout << "3" << std::endl;
     // 3. 根据上下文决定返回地址还是加载值
     // 如果是赋值语句的左值，返回地址；如果是表达式中的使用，加载值
     bool isLoad = true; // 默认需要加载
@@ -1445,7 +1465,7 @@ std::any Analysis::visitNumber(CACTParser::NumberContext *ctx) {
         //std::cout<<"int"<<std::endl;
         int intValue = std::stoi(ctx->IntConst()->getText(),nullptr,0);
         value = llvm::ConstantInt::get(builder.getInt32Ty(), intValue);
-        //std::cout<< value <<std::endl;
+        //std::cout<< intValue <<std::endl;
     } 
     else if (ctx->FloatConst()) {
         type.base_type = "float";
@@ -1512,16 +1532,21 @@ std::any Analysis::visitUnaryExp(CACTParser::UnaryExpContext *ctx) {
         auto unaryResult = std::any_cast<std::pair<SymType, llvm::Value*>>(visitUnaryExp(ctx->unaryExp()));
         SymType type = unaryResult.first;
         llvm::Value* value = unaryResult.second;
+
+        std::string op = ctx->children[0]->getText();
         
-        if (ctx->getText().find("!") == 0) {
-            // 逻辑非运算
-            if (!isSameType(type, Bool)) {
-                std::cerr << "Error: Logical NOT operator '!' requires boolean operand" << std::endl;
-                exit(1);
-            }
-            return std::make_pair(Bool, builder.CreateNot(value, "logicalnot"));
+        if (op == "!") {
+            // 1. 将操作数转换为布尔值
+            auto boolPair = convertToBool(unaryResult.first, unaryResult.second);
+            llvm::Value* boolValue = boolPair.second;
+            
+            // 2. 对转换后的布尔值执行 xor with true (等价于 not)
+            //    或者直接用 CreateICmpEQ with false
+            llvm::Value* notResult = builder.CreateICmpEQ(boolValue, builder.getFalse(), "logicalnot");
+
+            return std::make_pair(Bool, notResult);
         }
-        else if (ctx->getText().find("-") == 0) {
+        else if (op == "-") {
             // 负号运算
             if (type.base_type == "int") {
                 return std::make_pair(type, builder.CreateNeg(value, "neg"));
@@ -1534,7 +1559,7 @@ std::any Analysis::visitUnaryExp(CACTParser::UnaryExpContext *ctx) {
                 exit(1);
             }
         }
-        else if (ctx->getText().find("+") == 0) {
+        else if (op == "+") {
             // 正号运算 - 直接返回原值
             return unaryResult;
         }
@@ -1726,6 +1751,16 @@ std::any Analysis::visitRelExp(CACTParser::RelExpContext *ctx) {
         SymType rightType = rightInfo.first;
         llvm::Value* leftVal = leftInfo.second;
         llvm::Value* rightVal = rightInfo.second;
+
+        // 规则1: 如果一边是bool，另一边是int/char，将bool提升为int
+        if (isSameType(leftType, Bool) && (rightType.base_type == "int" || rightType.base_type == "char")) {
+            leftVal = builder.CreateZExt(leftVal, builder.getInt32Ty(), "booltoint");
+            leftType.base_type = "int"; // 更新类型信息以便后续判断
+        }
+        if ((leftType.base_type == "int" || leftType.base_type == "char") && isSameType(rightType, Bool)) {
+            rightVal = builder.CreateZExt(rightVal, builder.getInt32Ty(), "booltoint");
+            rightType.base_type = "int"; // 更新类型信息
+        }
         
         // 类型检查
         if (!isSameType(leftType, rightType)) {
@@ -1794,6 +1829,16 @@ std::any Analysis::visitEqExp(CACTParser::EqExpContext *ctx) {
         SymType rightType = rightInfo.first;
         llvm::Value* leftVal = leftInfo.second;
         llvm::Value* rightVal = rightInfo.second;
+
+        // 规则1: 如果一边是bool，另一边是int/char，将bool提升为int
+        if (isSameType(leftType, Bool) && (rightType.base_type == "int" || rightType.base_type == "char")) {
+            leftVal = builder.CreateZExt(leftVal, builder.getInt32Ty(), "booltoint");
+            leftType.base_type = "int"; // 更新类型信息以便后续判断
+        }
+        if ((leftType.base_type == "int" || leftType.base_type == "char") && isSameType(rightType, Bool)) {
+            rightVal = builder.CreateZExt(rightVal, builder.getInt32Ty(), "booltoint");
+            rightType.base_type = "int"; // 更新类型信息
+        }
         
         // 类型检查
         if (!isSameType(leftType, rightType)) {
@@ -1834,96 +1879,78 @@ std::any Analysis::visitEqExp(CACTParser::EqExpContext *ctx) {
 }
 
 std::any Analysis::visitLAndExp(CACTParser::LAndExpContext *ctx) {
-    //std::cout << "visit LAndExp" << std::endl;
     auto& builder = irGen->getBuilder();
     
     if (ctx->lAndExp() == nullptr) {
-        // 基本情况：直接返回等式表达式
         return visitEqExp(ctx->eqExp());
-    }
-    else {
-        // 递归处理逻辑与表达式
-        auto leftPair = std::any_cast<std::pair<SymType, llvm::Value*>>(visitLAndExp(ctx->lAndExp()));
-        auto rightPair = std::any_cast<std::pair<SymType, llvm::Value*>>(visitEqExp(ctx->eqExp()));
+    } else {
+        auto leftInfo = std::any_cast<std::pair<SymType, llvm::Value*>>(visitLAndExp(ctx->lAndExp()));
         
-        // 类型检查
-        if (!isSameType(leftPair.first, Bool) || !isSameType(rightPair.first, Bool)) {
-            std::cerr << "Error: Logical AND operation requires boolean operands" << std::endl;
-            exit(1);
-        }
+        // --- 关键修改 ---
+        // 将左操作数转换为布尔值
+        auto leftBoolPair = convertToBool(leftInfo.first, leftInfo.second);
+        llvm::Value* leftVal = leftBoolPair.second;
         
-        // 创建短路求值的逻辑与
-        llvm::Value* leftVal = leftPair.second;
-        llvm::Value* rightVal = rightPair.second;
-        
-        // 创建基本块用于短路求值
         llvm::Function* func = builder.GetInsertBlock()->getParent();
-        llvm::BasicBlock* lhsBB = builder.GetInsertBlock(); // 当前基本块（左操作数所在块）
+        llvm::BasicBlock* lhsBB = builder.GetInsertBlock();
         llvm::BasicBlock* rhsBB = llvm::BasicBlock::Create(builder.getContext(), "and.rhs", func);
         llvm::BasicBlock* mergeBB = llvm::BasicBlock::Create(builder.getContext(), "and.end", func);
         
-        // 条件跳转
         builder.CreateCondBr(leftVal, rhsBB, mergeBB);
         
-        // 生成右操作数代码
         builder.SetInsertPoint(rhsBB);
-        llvm::Value* rhsResult = rightVal;
+        auto rightInfo = std::any_cast<std::pair<SymType, llvm::Value*>>(visitEqExp(ctx->eqExp()));
+        // 将右操作数也转换为布尔值
+        auto rightBoolPair = convertToBool(rightInfo.first, rightInfo.second);
+        llvm::Value* rhsResult = rightBoolPair.second;
+        llvm::BasicBlock* rhsEndBB = builder.GetInsertBlock();
         builder.CreateBr(mergeBB);
         
-        // 生成合并块代码
         builder.SetInsertPoint(mergeBB);
         llvm::PHINode* phi = builder.CreatePHI(builder.getInt1Ty(), 2, "and.result");
-        phi->addIncoming(builder.getInt1(false), lhsBB);  // 左操作数为假时
-        phi->addIncoming(rhsResult, rhsBB);              // 左操作数为真时
+        phi->addIncoming(builder.getFalse(), lhsBB);
+        phi->addIncoming(rhsResult, rhsEndBB);
         
-        return std::make_pair(Bool, phi);
+        llvm::Value* phiValue = static_cast<llvm::Value*>(phi);
+        return std::make_pair(Bool, phiValue);
     }
 }
 
 std::any Analysis::visitLOrExp(CACTParser::LOrExpContext *ctx) {
-    //std::cout << "visit LOrExp" << std::endl;
     auto& builder = irGen->getBuilder();
     
     if (ctx->lOrExp() == nullptr) {
-        // 基本情况：直接返回逻辑与表达式
         return visitLAndExp(ctx->lAndExp());
-    }
-    else {
-        // 递归处理逻辑或表达式
+    } else {
         auto leftInfo = std::any_cast<std::pair<SymType, llvm::Value*>>(visitLOrExp(ctx->lOrExp()));
-        auto rightInfo = std::any_cast<std::pair<SymType, llvm::Value*>>(visitLAndExp(ctx->lAndExp()));
+
+        // --- 关键修改 ---
+        // 将左操作数转换为布尔值
+        auto leftBoolPair = convertToBool(leftInfo.first, leftInfo.second);
+        llvm::Value* leftVal = leftBoolPair.second;
         
-        // 类型检查
-        if (!isSameType(leftInfo.first, Bool) || !isSameType(rightInfo.first, Bool)) {
-            std::cerr << "Error: Logical OR operation requires boolean operands" << std::endl;
-            exit(1);
-        }
-        
-        // 创建短路求值的逻辑或
-        llvm::Value* leftVal = leftInfo.second;
-        llvm::Value* rightVal = rightInfo.second;
-        
-        // 创建基本块用于短路求值
         llvm::Function* func = builder.GetInsertBlock()->getParent();
-        llvm::BasicBlock* lhsBB = builder.GetInsertBlock(); // 当前基本块（左操作数所在块）
+        llvm::BasicBlock* lhsBB = builder.GetInsertBlock();
         llvm::BasicBlock* rhsBB = llvm::BasicBlock::Create(builder.getContext(), "or.rhs", func);
         llvm::BasicBlock* mergeBB = llvm::BasicBlock::Create(builder.getContext(), "or.end", func);
         
-        // 条件跳转
         builder.CreateCondBr(leftVal, mergeBB, rhsBB);
         
-        // 生成右操作数代码
         builder.SetInsertPoint(rhsBB);
-        llvm::Value* rhsResult = rightVal;
+        auto rightInfo = std::any_cast<std::pair<SymType, llvm::Value*>>(visitLAndExp(ctx->lAndExp()));
+        // 将右操作数也转换为布尔值
+        auto rightBoolPair = convertToBool(rightInfo.first, rightInfo.second);
+        llvm::Value* rhsResult = rightBoolPair.second;
+        llvm::BasicBlock* rhsEndBB = builder.GetInsertBlock();
         builder.CreateBr(mergeBB);
         
-        // 生成合并块代码
         builder.SetInsertPoint(mergeBB);
         llvm::PHINode* phi = builder.CreatePHI(builder.getInt1Ty(), 2, "or.result");
-        phi->addIncoming(builder.getInt1(true), lhsBB);  // 左操作数为真时
-        phi->addIncoming(rhsResult, rhsBB);             // 左操作数为假时
+        phi->addIncoming(builder.getTrue(), lhsBB);
+        phi->addIncoming(rhsResult, rhsEndBB);
         
-        return std::make_pair(Bool, phi);
+        llvm::Value* phiValue = static_cast<llvm::Value*>(phi);
+        return std::make_pair(Bool, phiValue);
     }
 }
 
@@ -1953,3 +1980,37 @@ std::any Analysis::visitErrorNode(tree::ErrorNode* node) {
     return nullptr;
 }
 
+std::pair<SymType, llvm::Value*> Analysis::convertToBool(const SymType& type, llvm::Value* value) {
+    if (isSameType(type, Bool)) {
+        // 如果已经是布尔类型，直接返回
+        return {type, value};
+    }
+
+    auto& builder = irGen->getBuilder();
+    llvm::Value* boolResult = nullptr;
+
+    if (type.base_type == "int" || type.base_type == "char") {
+        // 整型/字符型：与0比较
+        boolResult = builder.CreateICmpNE(
+            value, 
+            irGen->getZeroValue(type.base_type),
+            "tobool"
+        );
+    } 
+    else if (type.base_type == "float") {
+        // 浮点型：与0.0比较
+        boolResult = builder.CreateFCmpONE( // ONE: Ordered, Not Equal
+            value,
+            irGen->getZeroValue(type.base_type),
+            "tobool"
+        );
+    }
+    // 注意：这里没有处理指针类型，如果你的语言支持，也需要添加
+    else {
+        // 对于不支持的类型，抛出错误
+        std::cerr << "Error: Cannot convert type '" << type.base_type << "' to boolean for logical operation." << std::endl;
+        exit(1);
+    }
+
+    return {Bool, boolResult};
+}

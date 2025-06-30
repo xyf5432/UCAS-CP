@@ -2,7 +2,7 @@
     #include <vector>
 
 
-// Generated from ./CACT.g4 by ANTLR 4.13.1
+// Generated from CACT.g4 by ANTLR 4.13.1
 
 
 #include "CACTVisitor.h"
@@ -154,7 +154,7 @@ void cactParserInitialize() {
   	20,0,0,217,219,5,3,0,0,218,184,1,0,0,0,218,190,1,0,0,0,218,193,1,0,0,
   	0,218,194,1,0,0,0,218,199,1,0,0,0,218,208,1,0,0,0,218,214,1,0,0,0,218,
   	216,1,0,0,0,219,29,1,0,0,0,220,221,3,48,24,0,221,31,1,0,0,0,222,223,3,
-  	38,19,0,223,33,1,0,0,0,224,225,3,56,28,0,225,35,1,0,0,0,226,233,5,35,
+  	48,24,0,223,33,1,0,0,0,224,225,3,56,28,0,225,35,1,0,0,0,226,233,5,35,
   	0,0,227,228,5,7,0,0,228,229,3,30,15,0,229,230,5,8,0,0,230,232,1,0,0,0,
   	231,227,1,0,0,0,232,235,1,0,0,0,233,231,1,0,0,0,233,234,1,0,0,0,234,37,
   	1,0,0,0,235,233,1,0,0,0,236,237,7,2,0,0,237,39,1,0,0,0,238,243,3,30,15,
@@ -655,6 +655,11 @@ CACTParser::ConstInitValContext* CACTParser::constInitVal() {
     setState(109);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
+      case CACTParser::T__11:
+      case CACTParser::T__20:
+      case CACTParser::T__21:
+      case CACTParser::T__22:
+      case CACTParser::Ident:
       case CACTParser::IntConst:
       case CACTParser::FloatConst:
       case CACTParser::CharConst: {
@@ -673,7 +678,7 @@ CACTParser::ConstInitValContext* CACTParser::constInitVal() {
 
         _la = _input->LA(1);
         if ((((_la & ~ 0x3fULL) == 0) &&
-          ((1ULL << _la) & 481036338176) != 0)) {
+          ((1ULL << _la) & 515410760704) != 0)) {
           setState(98);
           constInitVal();
           setState(103);
@@ -1562,8 +1567,8 @@ CACTParser::ConstExpContext::ConstExpContext(ParserRuleContext *parent, size_t i
   : ParserRuleContext(parent, invokingState) {
 }
 
-CACTParser::NumberContext* CACTParser::ConstExpContext::number() {
-  return getRuleContext<CACTParser::NumberContext>(0);
+CACTParser::AddExpContext* CACTParser::ConstExpContext::addExp() {
+  return getRuleContext<CACTParser::AddExpContext>(0);
 }
 
 
@@ -1593,7 +1598,7 @@ CACTParser::ConstExpContext* CACTParser::constExp() {
   try {
     enterOuterAlt(_localctx, 1);
     setState(222);
-    number();
+    addExp(0);
    
   }
   catch (RecognitionException &e) {

@@ -6,6 +6,8 @@
 
 #include "llvm/IR/Value.h" 
 
+#define llvm_flag;
+
 struct SymType {
     std::string base_type;       // 基础类型（如 "int"）
     bool is_array;       // 是否为数组

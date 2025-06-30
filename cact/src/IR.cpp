@@ -23,26 +23,26 @@ llvm::Type* IRGenerator::getLLVMType(const SymType& type) {
     if (type.is_array) {
         // 反向遍历维度
         for (auto it = type.array_dims.rbegin(); it != type.array_dims.rend(); ++it) {
-            std::cout << "Array dimensions: [";
-            for (size_t i = 0; i < type.array_dims.size(); ++i) {
-                std::cout << type.array_dims[i];
-                if (i != type.array_dims.size() - 1) {
-                    std::cout << ", ";
-                }
-            }
-            std::cout << "]" << std::endl;
+            //std::cout << "Array dimensions: [";
+            //for (size_t i = 0; i < type.array_dims.size(); ++i) {
+            //    std::cout << type.array_dims[i];
+            //    if (i != type.array_dims.size() - 1) {
+            //        std::cout << ", ";
+            //    }
+            //}
+            //std::cout << "]" << std::endl;
         
-            std::cout << "First element in reverse: " << *type.array_dims.rbegin() << std::endl;
-            std::cout << "Last element in reverse: " << *type.array_dims.rend() << std::endl;
-            std::cout << *it << std::endl;
+            //std::cout << "First element in reverse: " << *type.array_dims.rbegin() << std::endl;
+            //std::cout << "Last element in reverse: " << *type.array_dims.rend() << std::endl;
+            //std::cout << *it << std::endl;
             if (*it == -1) {
                 // 可变长度数组只能作为最外层维度
-                if (*type.array_dims.rend()) {
+                if (std::next(it) != type.array_dims.rend()) {
                     throw std::runtime_error("Variable-length dimension must be the outermost");
                 }
                 baseType = llvm::ArrayType::get(baseType, 0); // 0表示可变长度
             } else {
-                baseType = llvm::ArrayType::get(baseType, *it > 0 ? *it : 1);
+                baseType = llvm::ArrayType::get(baseType, *it);
             }
         }
     }
@@ -69,12 +69,21 @@ llvm::Value* IRGenerator::generateVarDecl(
     llvm::Type* llvmType = getLLVMType(type);
     
     if (currentFunction) {
-        // 局部变量：在函数入口块创建alloca
-        llvm::IRBuilder<> entryBuilder(
-            &currentFunction->getEntryBlock(),
-            currentFunction->getEntryBlock().begin()
-        );
-        return entryBuilder.CreateAlloca(llvmType, nullptr, name);
+        // 1. 保存当前 builder 的插入点
+        llvm::IRBuilder<>::InsertPoint savedIP = builder.saveIP();
+
+        // 2. 将 builder 的插入点临时移动到函数入口块的开头
+        builder.SetInsertPoint(&currentFunction->getEntryBlock(), 
+                               currentFunction->getEntryBlock().begin());
+        
+        // 3. 使用持久的 builder 创建 alloca 指令
+        llvm::Value* alloca = builder.CreateAlloca(llvmType, nullptr, name);
+
+        // 4. 恢复 builder 到原来的插入点
+        builder.restoreIP(savedIP);
+
+        // 5. 返回创建好的 alloca
+        return alloca;
     } else {
         return new llvm::GlobalVariable(
             *module,

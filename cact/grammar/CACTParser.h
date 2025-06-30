@@ -2,7 +2,7 @@
     #include <vector>
 
 
-// Generated from ./CACT.g4 by ANTLR 4.13.1
+// Generated from CACT.g4 by ANTLR 4.13.1
 
 #pragma once
 
@@ -322,7 +322,7 @@ public:
   public:
     ConstExpContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    NumberContext *number();
+    AddExpContext *addExp();
 
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;

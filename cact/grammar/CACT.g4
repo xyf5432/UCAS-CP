@@ -101,7 +101,7 @@ exp
 
 // 常量表达式
 constExp
-    : number
+    : addExp
     ;
 
 // 条件表达式
@@ -195,6 +195,8 @@ FloatConst
     | ( ( Digit+ ('.' Digit*)? | '.' Digit+ ) // 基数部分
           [Ee] [+-]? Digit+))                     // 指数部分
       [fF]?
+    |   // 十六进制浮点数 (Hexadecimal Floating-Point)
+        '0' [xX] (HexDigit+ '.' HexDigit* | '.' HexDigit+) BinaryExponent [fF]?
     ;
 
 //' '内转义或其他字符（排除需要转义的字符）
@@ -234,7 +236,7 @@ fragment OctalConst
     ;
 
 fragment HexadecConst
-    : '0' [xX] [0-9a-fA-F]+
+    : '0' [xX] HexDigit+
     ;
 
 fragment EscapeChar
@@ -243,4 +245,12 @@ fragment EscapeChar
 
 fragment Digit
     : [0-9]
+    ;
+
+fragment HexDigit
+    :   [0-9a-fA-F]
+    ;
+
+fragment BinaryExponent
+    :   [pP] [+-]? Digit+
     ;

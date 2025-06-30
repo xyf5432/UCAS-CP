@@ -61,6 +61,8 @@ private:
                                llvm::Value* arrayPtr,
                                size_t dimIndex,
                                std::vector<llvm::Value*>& indices);
+    
+    std::pair<SymType, llvm::Value*> convertToBool(const SymType& type, llvm::Value* value);
 
 public:
     Analysis();
