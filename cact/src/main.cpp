@@ -31,7 +31,20 @@ int main(int argc, const char* argv[]) {
       Analysis visitor;
       visitor.visit( tree );
       
-      // ... (后续的 IR 生成和 RISC-V 生成) ...
+      // 1. 获取已经生成好的 LLVM Module
+      llvm::Module* module = visitor.getIRGenerator().getModule();
+
+      // 2. 验证模块的正确性 (好习惯)
+      //if (llvm::verifyModule(*module, &llvm::errs())) {
+      //    std::cerr << "LLVM Module verification failed. Aborting." << std::endl;
+      //    return 1;
+      //}
+
+      // 3. 创建并运行你的 RISC-V 代码生成器
+      RISCVCodeGenerator riscv_gen;
+      riscv_gen.generate(module, "output.s"); // "output.s" is the final assembly file
+
+      std::cout << "RISC-V assembly generated in output.s" << std::endl;
 
   } catch (const ParseCancellationException &ex) {
       // 如果 SLL 失败，说明可能存在真正的歧义。

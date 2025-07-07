@@ -22,6 +22,7 @@ private:
     void visitModule(llvm::Module* module);
     void visitFunction(llvm::Function& function);
     void visitBasicBlock(llvm::BasicBlock& block);
+    void emitConstant(std::ofstream& out, const llvm::Constant* C);
     
     // 指令分发器
     void visitInstruction(llvm::Instruction& instr);
@@ -65,4 +66,5 @@ private:
     int current_stack_size;
     llvm::Function* current_function; // 指向当前正在处理的函数
     std::string epilogue_label;       // Label for the unified function epilogue
+    llvm::Module* current_module;
 };

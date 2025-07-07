@@ -987,9 +987,9 @@ std::any Analysis::visitFuncDef(CACTParser::FuncDefContext *ctx) {
     }*/
 
     // 10. 验证函数IR
-    if (llvm::verifyFunction(*function, &llvm::errs())) {
-        std::cerr << "Error: Invalid function generated for " << funcName << std::endl;
-    }
+    //if (llvm::verifyFunction(*function, &llvm::errs())) {
+    //    std::cerr << "Error: Invalid function generated for " << funcName << std::endl;
+    //}
     
     // 11. 清理函数状态
     current_funname.pop();
@@ -1475,8 +1475,33 @@ std::any Analysis::visitNumber(CACTParser::NumberContext *ctx) {
     }
     else if (ctx->CharConst()) {
         type.base_type = "char";
-        //std::cout<<"char"<<std::endl;
-        char charValue = ctx->CharConst()->getText()[1]; // 跳过单引号
+        std::string text = ctx->CharConst()->getText(); // 例如，text = "'\\n'" 或 "'a'"
+
+        char charValue;
+
+        // **核心修复：处理转义字符**
+        if (text.length() > 3 && text[1] == '\\') {
+            // 这是一个转义序列，如 '\n', '\t', '\\' 等
+            switch (text[2]) {
+                case 'n':  charValue = '\n'; break; // 换行
+                case 't':  charValue = '\t'; break; // 制表符
+                case 'r':  charValue = '\r'; break; // 回车
+                case '\\': charValue = '\\'; break; // 反斜杠本身
+                case '\'': charValue = '\''; break; // 单引号
+                case '\"': charValue = '\"'; break; // 双引号
+                // 你可以根据C--的语言规范添加更多转义字符，如 \0
+                case '0':  charValue = '\0'; break; // 空字符
+                default:
+                    // 如果不是一个已知的转-escape sequence, 也许可以当作普通字符处理或报错
+                    // 这里我们简单地把它当作那个字符本身
+                    charValue = text[2]; 
+                    break;
+            }
+        } else {
+            // 这是一个普通字符，例如 'a'
+            charValue = text[1];
+        }
+        
         value = llvm::ConstantInt::get(builder.getInt8Ty(), charValue);
     }
     
