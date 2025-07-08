@@ -1,8 +1,7 @@
 ; ModuleID = 'CACT_module'
 source_filename = "CACT_module"
 
-@a = global i32 -1
-@b = global i32 1
+@g = global i32 0
 
 declare void @print_int(i32)
 
@@ -16,109 +15,146 @@ declare float @get_float()
 
 declare i8 @get_char()
 
-define i32 @inc_a() {
+define i32 @func(i32 %n) {
 entry:
-  %b = alloca i32
-  store i32 0, i32* %b
-  %a.val = load i32, i32* @a
-  store i32 %a.val, i32* %b
-  %b.val = load i32, i32* %b
-  %add_tmp = add i32 %b.val, 1
-  store i32 %add_tmp, i32* %b
-  %b.val1 = load i32, i32* %b
-  store i32 %b.val1, i32* @a
-  %a.val2 = load i32, i32* @a
-  ret i32 %a.val2
+  %n1 = alloca i32
+  store i32 %n, i32* %n1
+  %g.val = load i32, i32* @g
+  %n.val = load i32, i32* %n1
+  %add_tmp = add i32 %g.val, %n.val
+  store i32 %add_tmp, i32* @g
+  %g.val2 = load i32, i32* @g
+  call void @print_int(i32 %g.val2)
+  %g.val3 = load i32, i32* @g
+  ret i32 %g.val3
 }
 
 define i32 @main() {
 entry:
-  %k = alloca i32
-  store i32 5, i32* %k
-  br label %while.cond
+  %i = alloca i32
+  store i32 0, i32* %i
+  %calltmp = call i32 @get_int()
+  store i32 %calltmp, i32* %i
+  %i.val = load i32, i32* %i
+  %cmptmp = icmp sgt i32 %i.val, 10
+  br i1 %cmptmp, label %and.rhs, label %and.end
 
-while.cond:                                       ; preds = %if.merge20, %entry
-  %k.val = load i32, i32* %k
-  %cmptmp = icmp sge i32 %k.val, 0
-  br i1 %cmptmp, label %while.body, label %while.end
-
-while.body:                                       ; preds = %while.cond
-  %calltmp = call i32 @inc_a()
-  %netmp = icmp ne i32 %calltmp, 0
-  br i1 %netmp, label %and.rhs, label %and.end
-
-and.rhs:                                          ; preds = %while.body
-  %calltmp1 = call i32 @inc_a()
-  %netmp2 = icmp ne i32 %calltmp1, 0
+and.rhs:                                          ; preds = %entry
+  %i.val1 = load i32, i32* %i
+  %calltmp2 = call i32 @func(i32 %i.val1)
+  %tobool = icmp ne i32 %calltmp2, 0
   br label %and.end
 
-and.end:                                          ; preds = %and.rhs, %while.body
-  %and.result = phi i1 [ false, %while.body ], [ %netmp2, %and.rhs ]
-  br i1 %and.result, label %and.rhs3, label %and.end4
+and.end:                                          ; preds = %and.rhs, %entry
+  %and.result = phi i1 [ false, %entry ], [ %tobool, %and.rhs ]
+  br i1 %and.result, label %if.then, label %if.else
 
-and.rhs3:                                         ; preds = %and.end
-  %calltmp5 = call i32 @inc_a()
-  %netmp6 = icmp ne i32 %calltmp5, 0
-  br label %and.end4
-
-and.end4:                                         ; preds = %and.rhs3, %and.end
-  %and.result7 = phi i1 [ false, %and.end ], [ %netmp6, %and.rhs3 ]
-  br i1 %and.result7, label %if.then, label %if.merge
-
-if.then:                                          ; preds = %and.end4
-  %a.val = load i32, i32* @a
-  %b.val = load i32, i32* @b
-  %add_tmp = add i32 %a.val, %b.val
-  store i32 %add_tmp, i32* @a
+if.then:                                          ; preds = %and.end
+  store i32 1, i32* %i
   br label %if.merge
 
-if.merge:                                         ; preds = %if.then, %and.end4
-  %calltmp8 = call i32 @inc_a()
-  %cmptmp9 = icmp slt i32 %calltmp8, 14
-  br i1 %cmptmp9, label %or.end, label %or.rhs
+if.else:                                          ; preds = %and.end
+  store i32 0, i32* %i
+  br label %if.merge
 
-or.rhs:                                           ; preds = %if.merge
-  %calltmp10 = call i32 @inc_a()
-  %netmp11 = icmp ne i32 %calltmp10, 0
-  br i1 %netmp11, label %and.rhs12, label %and.end13
+if.merge:                                         ; preds = %if.else, %if.then
+  %calltmp3 = call i32 @get_int()
+  store i32 %calltmp3, i32* %i
+  %i.val4 = load i32, i32* %i
+  %cmptmp5 = icmp sgt i32 %i.val4, 11
+  br i1 %cmptmp5, label %and.rhs6, label %and.end7
 
-or.end:                                           ; preds = %and.end13, %if.merge
-  %or.result = phi i1 [ true, %if.merge ], [ %and.result18, %and.end13 ]
-  br i1 %or.result, label %if.then19, label %if.else
+and.rhs6:                                         ; preds = %if.merge
+  %i.val8 = load i32, i32* %i
+  %calltmp9 = call i32 @func(i32 %i.val8)
+  %tobool10 = icmp ne i32 %calltmp9, 0
+  br label %and.end7
 
-and.rhs12:                                        ; preds = %or.rhs
-  %calltmp14 = call i32 @inc_a()
-  %calltmp15 = call i32 @inc_a()
-  %sub_tmp = sub i32 %calltmp14, %calltmp15
-  %add_tmp16 = add i32 %sub_tmp, 1
-  %netmp17 = icmp ne i32 %add_tmp16, 0
-  br label %and.end13
+and.end7:                                         ; preds = %and.rhs6, %if.merge
+  %and.result11 = phi i1 [ false, %if.merge ], [ %tobool10, %and.rhs6 ]
+  br i1 %and.result11, label %if.then12, label %if.else13
 
-and.end13:                                        ; preds = %and.rhs12, %or.rhs
-  %and.result18 = phi i1 [ false, %or.rhs ], [ %netmp17, %and.rhs12 ]
+if.then12:                                        ; preds = %and.end7
+  store i32 1, i32* %i
+  br label %if.merge14
+
+if.else13:                                        ; preds = %and.end7
+  store i32 0, i32* %i
+  br label %if.merge14
+
+if.merge14:                                       ; preds = %if.else13, %if.then12
+  %calltmp15 = call i32 @get_int()
+  store i32 %calltmp15, i32* %i
+  %i.val16 = load i32, i32* %i
+  %cmptmp17 = icmp sle i32 %i.val16, 99
+  br i1 %cmptmp17, label %or.end, label %or.rhs
+
+or.rhs:                                           ; preds = %if.merge14
+  %i.val18 = load i32, i32* %i
+  %calltmp19 = call i32 @func(i32 %i.val18)
+  %tobool20 = icmp ne i32 %calltmp19, 0
   br label %or.end
 
-if.then19:                                        ; preds = %or.end
-  %b.val21 = load i32, i32* @b
-  store i32 %b.val21, i32* @a
-  %b.val22 = load i32, i32* @b
-  %mul_tmp = mul i32 %b.val22, 2
-  store i32 %mul_tmp, i32* @b
-  br label %if.merge20
+or.end:                                           ; preds = %or.rhs, %if.merge14
+  %or.result = phi i1 [ true, %if.merge14 ], [ %tobool20, %or.rhs ]
+  br i1 %or.result, label %if.then21, label %if.else22
 
-if.else:                                          ; preds = %or.end
-  %calltmp23 = call i32 @inc_a()
-  br label %if.merge20
+if.then21:                                        ; preds = %or.end
+  store i32 1, i32* %i
+  br label %if.merge23
 
-if.merge20:                                       ; preds = %if.else, %if.then19
-  %k.val24 = load i32, i32* %k
-  %sub_tmp25 = sub i32 %k.val24, 1
-  store i32 %sub_tmp25, i32* %k
-  br label %while.cond
+if.else22:                                        ; preds = %or.end
+  store i32 0, i32* %i
+  br label %if.merge23
 
-while.end:                                        ; preds = %while.cond
-  %a.val26 = load i32, i32* @a
-  %b.val27 = load i32, i32* @b
-  %add_tmp28 = add i32 %a.val26, %b.val27
-  ret i32 %add_tmp28
+if.merge23:                                       ; preds = %if.else22, %if.then21
+  %calltmp24 = call i32 @get_int()
+  store i32 %calltmp24, i32* %i
+  %i.val25 = load i32, i32* %i
+  %cmptmp26 = icmp sle i32 %i.val25, 100
+  br i1 %cmptmp26, label %or.end28, label %or.rhs27
+
+or.rhs27:                                         ; preds = %if.merge23
+  %i.val29 = load i32, i32* %i
+  %calltmp30 = call i32 @func(i32 %i.val29)
+  %tobool31 = icmp ne i32 %calltmp30, 0
+  br label %or.end28
+
+or.end28:                                         ; preds = %or.rhs27, %if.merge23
+  %or.result32 = phi i1 [ true, %if.merge23 ], [ %tobool31, %or.rhs27 ]
+  br i1 %or.result32, label %if.then33, label %if.else34
+
+if.then33:                                        ; preds = %or.end28
+  store i32 1, i32* %i
+  br label %if.merge35
+
+if.else34:                                        ; preds = %or.end28
+  store i32 0, i32* %i
+  br label %if.merge35
+
+if.merge35:                                       ; preds = %if.else34, %if.then33
+  %calltmp36 = call i32 @func(i32 99)
+  %tobool37 = icmp ne i32 %calltmp36, 0
+  %logicalnot = icmp eq i1 %tobool37, false
+  br i1 %logicalnot, label %and.rhs38, label %and.end39
+
+and.rhs38:                                        ; preds = %if.merge35
+  %calltmp40 = call i32 @func(i32 100)
+  %tobool41 = icmp ne i32 %calltmp40, 0
+  br label %and.end39
+
+and.end39:                                        ; preds = %and.rhs38, %if.merge35
+  %and.result42 = phi i1 [ false, %if.merge35 ], [ %tobool41, %and.rhs38 ]
+  br i1 %and.result42, label %if.then43, label %if.else44
+
+if.then43:                                        ; preds = %and.end39
+  store i32 1, i32* %i
+  br label %if.merge45
+
+if.else44:                                        ; preds = %and.end39
+  store i32 0, i32* %i
+  br label %if.merge45
+
+if.merge45:                                       ; preds = %if.else44, %if.then43
+  ret i32 0
 }

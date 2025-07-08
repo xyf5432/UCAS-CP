@@ -10,6 +10,24 @@
 #include <iostream>
 #include <sstream>
 
+#define DEBUG_LOG 1 // 设置为 1 开启调试, 设置为 0 关闭
+
+#if DEBUG_LOG
+#define LOG_INSTRUCTION(I) std::cout << "[VISIT] " << valueToString(&(I)) << "\n"
+#define LOG_FUNC(F) std::cout << "\n\n[FUNC] Processing function: @" << (F).getName().str() << "\n"
+#define LOG_BB(BB) std::cout << "[BB]   Processing basic block: " << (BB).getName().str() << "\n"
+#define LOG_LOAD(val, ptr, reg) std::cout << "[LOAD]   lw " << (reg) << ", 0(" << valueToString(ptr) << ") -> value: " << valueToString(val) << "\n"
+#define LOG_STORE(val, ptr) std::cout << "[STORE]  sw " << valueToString(val) << ", 0(" << valueToString(ptr) << ")\n"
+#define LOG_ADDR(val, reg) std::cout << "[ADDR]   la/addi " << (reg) << ", " << valueToString(val) << "\n"
+#else
+#define LOG_INSTRUCTION(I)
+#define LOG_FUNC(F)
+#define LOG_BB(BB)
+#define LOG_LOAD(val, ptr, reg)
+#define LOG_STORE(val, ptr)
+#define LOG_ADDR(val, reg)
+#endif
+
 void RISCVCodeGenerator::generate(llvm::Module* module, const std::string& filename) {
     out.open(filename);
     if (!out.is_open()) {
@@ -40,6 +58,7 @@ void RISCVCodeGenerator::processGlobals(llvm::Module* module) {
 }
 
 void RISCVCodeGenerator::loadAddressOfValueToReg(llvm::Value* value, const std::string& reg) {
+    LOG_ADDR(value, reg);
     if (auto* G = llvm::dyn_cast<llvm::GlobalValue>(value)) {
         out << "  la   " << reg << ", " << G->getName().str() << "\n";
     } else if (stack_offsets.count(value)) {
@@ -70,6 +89,7 @@ void RISCVCodeGenerator::visitModule(llvm::Module* module) {
 }
 
 void RISCVCodeGenerator::visitFunction(llvm::Function& F) {
+    LOG_FUNC(F);
     out << "\n" << F.getName().str() << ":\n";
     current_function = &F;
     epilogue_label = "." + F.getName().str() + "_epilogue";
@@ -77,45 +97,69 @@ void RISCVCodeGenerator::visitFunction(llvm::Function& F) {
     
     // --- Pass 1: Allocate stack space ---
     
-    // **修改：为 ra/s0 和 caller-saved 寄存器暂存区预留空间**
-    int local_var_offset = 0;
-    int caller_saved_area_size = 32; // 为 t0-t6 (28字节) 预留32字节
-    local_var_offset -= 16; // ra/s0 的空间
-    local_var_offset -= caller_saved_area_size; // 调用者保存寄存器的暂存区
+     const llvm::DataLayout& dl = F.getParent()->getDataLayout();
+    auto getAlignedSize = [&](llvm::Type* type) {
+        uint64_t size = dl.getTypeAllocSize(type);
+        // 向上对齐到4字节
+        return (size + 3) & ~3; 
+    };
 
-    // **核心修复：为函数参数分配栈上备份空间**
-    const llvm::DataLayout& dl = F.getParent()->getDataLayout();
+    int size_for_locals = 0; // Total space for locals, temps, and arg backups
+
+    // Space for argument backups on the stack
     for (auto& arg : F.args()) {
-        uint64_t size = dl.getTypeAllocSize(arg.getType());
-        local_var_offset -= size;
-        stack_offsets[&arg] = local_var_offset; // 将参数arg映射到它的栈偏移
+        size_for_locals += getAlignedSize(arg.getType());
     }
 
-    // 遍历所有指令，计算局部变量和临时值所需的总空间
+    // Space for alloca instructions and instruction results
     for (llvm::BasicBlock& BB : F) {
         for (llvm::Instruction& I : BB) {
             if (auto* allocaInst = llvm::dyn_cast<llvm::AllocaInst>(&I)) {
-                // alloca 指令的值就是地址，所以它的偏移就是它所分配空间顶部的地址
-                uint64_t size = dl.getTypeAllocSize(allocaInst->getAllocatedType());
-                local_var_offset -= size; 
-                stack_offsets[allocaInst] = local_var_offset;
+                // Alloca 已经是对齐的
+                size_for_locals += dl.getTypeAllocSize(allocaInst->getAllocatedType());
             } 
             else if (!I.getType()->isVoidTy()) {
-                // 为指令结果分配临时空间
-                // 假设所有临时结果大小为4字节（需要根据类型调整）
-                // 更好的做法是: local_var_offset -= dl.getTypeAllocSize(I.getType());
-                local_var_offset -= 4; 
-                stack_offsets[&I] = local_var_offset;
+                size_for_locals += getAlignedSize(I.getType());
             }
         }
     }
 
-    // 计算最终的栈帧大小
-    current_stack_size = -local_var_offset;
+    // Total stack frame size = fixed area + locals area
+    int fixed_size = 16 + 32; // 16 bytes for ra/s0, 32 bytes for t0-t6 caller-saved registers
+    current_stack_size = fixed_size + size_for_locals;
     
-    // Align the stack frame to a 16-byte boundary
+    // Align the final stack size to a 16-byte boundary
     if (current_stack_size % 16 != 0) {
         current_stack_size += 16 - (current_stack_size % 16);
+    }
+    
+    // --- Pass 1.5: Assign stack offsets ---
+    // Offsets are negative, relative to the frame pointer s0.
+    // The local data area starts right below the fixed area.
+    int current_offset = -fixed_size; 
+
+    // Assign offsets for argument backups
+    for (auto& arg : F.args()) {
+        uint64_t size = getAlignedSize(arg.getType());
+        // The offset points to the TOP of the allocated space for the value.
+        stack_offsets[&arg] = current_offset;
+        current_offset -= size;
+    }
+    
+    // Assign offsets for alloca instructions and instruction results
+    for (llvm::BasicBlock& BB : F) {
+        for (llvm::Instruction& I : BB) {
+            if (auto* allocaInst = llvm::dyn_cast<llvm::AllocaInst>(&I)) {
+                uint64_t size = dl.getTypeAllocSize(allocaInst->getAllocatedType());
+                stack_offsets[allocaInst] = current_offset;
+                current_offset -= size;
+            } 
+            else if (!I.getType()->isVoidTy()) {
+                uint64_t aligned_size = getAlignedSize(I.getType());
+                stack_offsets[&I] = current_offset;
+                current_offset -= aligned_size;
+            }
+        }
     }
     
     // --- Pass 2: Generate code ---
@@ -147,6 +191,7 @@ void RISCVCodeGenerator::visitFunction(llvm::Function& F) {
 }
 
 void RISCVCodeGenerator::visitBasicBlock(llvm::BasicBlock& BB) {
+    LOG_BB(BB);
     // Basic block names from LLVM IR might contain illegal characters, so sanitize them
     out << "." << BB.getParent()->getName().str() << "_" << BB.getName().str() << ":\n";
     for (llvm::Instruction& I : BB) {
@@ -162,15 +207,6 @@ void RISCVCodeGenerator::functionPrologue(llvm::Function& F) {
     out << "  sw   s0, " << (current_stack_size - 8) << "(sp)\n"; // Save old frame pointer
     out << "  addi s0, sp, " << current_stack_size << "\n"; // Set new frame pointer
     
-    // Store function arguments from a0, a1, ... registers to the stack
-    int arg_idx = 0;
-    for (auto& arg : F.args()) {
-        if (arg_idx < 8) { // First 8 RISC-V arguments are passed via a0-a7
-            std::string reg_name = "a" + std::to_string(arg_idx);
-            storeRegToValue(reg_name, &arg);
-        }
-        arg_idx++;
-    }
 }
 
 void RISCVCodeGenerator::functionEpilogue(llvm::Function& F) {
@@ -223,32 +259,14 @@ void RISCVCodeGenerator::loadValueToReg(llvm::Value* value, const std::string& r
         }
 
     } else if (auto* CF = llvm::dyn_cast<llvm::ConstantFP>(value)) {
-        // ... 对浮点常量的加载也需要应用同样的逻辑 ...
-        std::string temp_reg = "t3";
-        llvm::APInt int_val = CF->getValueAPF().bitcastToAPInt();
-        long long val = int_val.getZExtValue();
-        
-        int low12 = val & 0xFFF;
-        if (low12 & 0x800) {
-            low12 -= 0x1000;
-        }
-        int high20 = (val - low12) >> 12;
-
-        std::string temp_slot = "-32(s0)"; // 或者其他预留的临时槽
-
-        if (low12 == 0) {
-            out << "  lui  " << temp_reg << ", " << high20 << "\n";
-        } else {
-            out << "  lui  " << temp_reg << ", " << high20 << "\n";
-            out << "  addi " << temp_reg << ", " << temp_reg << ", " << low12 << "\n";
-        }
-        
-        out << "  sw   " << temp_reg << ", " << temp_slot << "\n";
-        out << "  lw  " << reg << ", " << temp_slot << "\n";
-
-    } else {
+        out << "  # FATAL ERROR: loadValueToReg called with a float constant! Check the caller.\n";
+        return;
+    } else if ((value->getType()->isIntegerTy() || value->getType()->isPointerTy())) {
         // 从栈或全局变量加载
         out << "  lw   " << reg << ", " << getStackAddress(value) << "\n";
+    } else {
+        // 如果一个浮点值被传到这里，说明调用者（如visitStoreInst或visitCallInst）出错了
+        out << "  # FATAL ERROR: Trying to load a float value using lw. Check the caller.\n";
     }
 }
 
@@ -322,6 +340,7 @@ void RISCVCodeGenerator::emitConstant(std::ofstream& out, const llvm::Constant* 
 
 // --- Instruction dispatcher ---
 void RISCVCodeGenerator::visitInstruction(llvm::Instruction& I) {
+    LOG_INSTRUCTION(I);
     // Print the instruction as a comment for easier debugging
     std::string instStr;
     llvm::raw_string_ostream rso(instStr);
@@ -463,9 +482,11 @@ void RISCVCodeGenerator::visitLoadInst(llvm::LoadInst& I) {
     }
 
     if (isFloat) {
+        LOG_LOAD(&I, ptr, "ft0");
         out << "  flw  ft0, 0(t0)\n";       // 使用 flw 加载浮点数
         storeFloatRegToValue("ft0", &I); // 存到浮点结果
     } else {
+        LOG_LOAD(&I, ptr, "t1");
         out << "  lw   t1, 0(t0)\n";         // 使用 lw 加载整数
         storeRegToValue("t1", &I);      // 存到整数结果
     }
@@ -474,35 +495,37 @@ void RISCVCodeGenerator::visitLoadInst(llvm::LoadInst& I) {
 void RISCVCodeGenerator::visitStoreInst(llvm::StoreInst& I) {
     llvm::Value* val = I.getValueOperand();
     llvm::Value* ptr = I.getPointerOperand();
-    bool isFloat = val->getType()->isFloatTy();
-    
-    // 加载要存储的值到 t0
-    loadValueToReg(val, "t0");
+    LOG_STORE(val, ptr);
 
-    // 加载目标地址指针的值（即地址本身）到 t1
-    if (auto* alloca = llvm::dyn_cast<llvm::AllocaInst>(ptr)) {
-        // 如果ptr是alloca，直接计算其地址
-        out << "  addi t1, s0, " << stack_offsets[ptr] << "\n";
-    } else if (auto* G = llvm::dyn_cast<llvm::GlobalValue>(ptr)) {
-        out << "  la   t1, " << G->getName().str() << "\n";
+    // 1. 获取要写入的目标地址，存入 t1 寄存器
+    // --- 这是本次修正的核心 ---
+    if (llvm::isa<llvm::AllocaInst>(ptr) || llvm::isa<llvm::GlobalVariable>(ptr)) {
+        // 如果指针是 alloca 或 global variable，它本身就是地址的“符号”，
+        // 我们需要计算它的运行时地址。
+        loadAddressOfValueToReg(ptr, "t1");
     } else {
-        // 如果ptr是其他指令的结果（例如GEP），
-        // 它的值（地址）被存在它自己的栈槽里，需要先加载出来。
+        // 如果指针是 GEP、load 等指令的结果，那么它的值（目标地址）已经
+        // 被计算好并存在它自己的栈槽里了，我们需要把它加载出来。
         loadValueToReg(ptr, "t1");
     }
-
-    // 将 t0 的值存到 t1 指向的地址
-    if (isFloat) {
-        // --- 浮点数存储 ---
-        loadFloatValueToReg(val, "ft0"); // 将要存储的浮点值加载到浮点寄存器
-        out << "  fsw  ft0, 0(t1)\n";     // 使用 fsw 存储
+    
+    // 2. 根据值的类型，加载到对应的寄存器并存储
+    if (val->getType()->isFloatTy()) {
+        // --- 浮点数路径 ---
+        // a. 将要存储的浮点值加载到临时浮点寄存器 ft0
+        loadFloatValueToReg(val, "ft0");
+        // b. 用 fsw 将 ft0 存入 t1 指向的地址
+        out << "  fsw  ft0, 0(t1)\n";
     } else {
-        // --- 整数存储 ---
-        loadValueToReg(val, "t0");       // 将要存储的整数值加载到整数寄存器
-        out << "  sw   t0, 0(t1)\n";       // 使用 sw 存储
+        // --- 整数/指针路径 ---
+        // a. 将要存储的整数/指针值加载到临时整数寄存器 t0
+        loadValueToReg(val, "t0");
+        // b. 用 sw 将 t0 存入 t1 指向的地址
+        out << "  sw   t0, 0(t1)\n";
     }
 }
 
+// RISCVCodeGenerator.cpp
 void RISCVCodeGenerator::visitBranchInst(llvm::BranchInst& I) {
     if (I.isConditional()) {
         llvm::Value* cond = I.getCondition();
@@ -510,41 +533,54 @@ void RISCVCodeGenerator::visitBranchInst(llvm::BranchInst& I) {
         llvm::BasicBlock* falseDest = I.getSuccessor(1);
         std::string trueLabel = "." + trueDest->getParent()->getName().str() + "_" + trueDest->getName().str();
         std::string falseLabel = "." + falseDest->getParent()->getName().str() + "_" + falseDest->getName().str();
-        std::string false_phi_label = "." + current_function->getName().str() + "_phi_false" + std::to_string((intptr_t)&I);
-        std::string end_label = "." + current_function->getName().str() + "_br_end" + std::to_string((intptr_t)&I);
+        
+        // --- START OF NEW LOGIC ---
 
+        // 在这里，当前块（I.getParent()）即将终结。
+        // 我们需要生成代码，根据条件`cond`跳转到不同的路径。
+        // 在每个路径上，我们必须为该路径的目标块的PHI节点提供值。
+
+        std::string falsePathLabel = "." + I.getParent()->getName().str() + "_br_false_path_" + std::to_string(reinterpret_cast<uintptr_t>(&I));
+
+        // 1. 加载条件并进行主分支
         loadValueToReg(cond, "t0");
-        out << "  beqz t0, " << false_phi_label << "\n";
+        out << "  beqz t0, " << falsePathLabel << "\n";
 
-        // --- True Path ---
-        // 为 trueDest 的 phi 节点赋值
+        // 2. TRUE PATH: 这部分代码只有在 cond 为 true 时执行
+        //    为 trueDest 的所有 PHI 节点准备 incoming value
         for (llvm::PHINode& phi : trueDest->phis()) {
             llvm::Value* incomingVal = phi.getIncomingValueForBlock(I.getParent());
-            loadValueToReg(incomingVal, "t2");
+            loadValueToReg(incomingVal, "t2"); // Use a temp reg
             storeRegToValue("t2", &phi);
         }
+        //    跳转到真正的 trueDest 基本块
         out << "  j " << trueLabel << "\n";
-        
-        // --- False Path ---
-        out << false_phi_label << ":\n";
-        // 为 falseDest 的 phi 节点赋值
+
+        // 3. FALSE PATH: 这部分代码只有在 cond 为 false 时执行
+        out << falsePathLabel << ":\n";
+        //    为 falseDest 的所有 PHI 节点准备 incoming value
         for (llvm::PHINode& phi : falseDest->phis()) {
             llvm::Value* incomingVal = phi.getIncomingValueForBlock(I.getParent());
-            loadValueToReg(incomingVal, "t2");
+            loadValueToReg(incomingVal, "t2"); // Use a temp reg
             storeRegToValue("t2", &phi);
         }
+        //    跳转到真正的 falseDest 基本块
         out << "  j " << falseLabel << "\n";
+        
+        // --- END OF NEW LOGIC ---
 
-    } else {
-        // 无条件跳转逻辑不变
+    } else { // Unconditional Branch
         llvm::BasicBlock* dest = I.getSuccessor(0);
+        std::string destLabel = "." + dest->getParent()->getName().str() + "_" + dest->getName().str();
+
+        // 为目标块的所有 PHI 节点准备 incoming value
         for (llvm::PHINode& phi : dest->phis()) {
             llvm::Value* incomingVal = phi.getIncomingValueForBlock(I.getParent());
             loadValueToReg(incomingVal, "t2");
             storeRegToValue("t2", &phi);
         }
-        std::string destLabel = "." + dest->getParent()->getName().str() + "_" + dest->getName().str();
-        out << "  j    " << destLabel << "\n";
+        // 直接跳转
+        out << "  j " << destLabel << "\n";
     }
 }
 
@@ -683,6 +719,7 @@ void RISCVCodeGenerator::visitCastInst(llvm::CastInst& I) {
 }
 
 void RISCVCodeGenerator::visitFCmpInst(llvm::FCmpInst& I) {
+    
     loadFloatValueToReg(I.getOperand(0), "ft0");
     loadFloatValueToReg(I.getOperand(1), "ft1");
 

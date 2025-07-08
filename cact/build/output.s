@@ -1,497 +1,623 @@
 .data
-RADIUS:
-  .word 0x40b00000
-PI:
-  .word 0x40490fdb
-EPS:
-  .word 0x358637bd
-PI_HEX:
-  .word 0x40490fdb
-HEX2:
-  .word 0x3da00000
-FACT:
-  .word 0xc700e800
-CONV1:
-  .word 0x43690000
-CONV2:
-  .word 0x457ff000
-MAX:
-  .word 1000000000
-TWO:
-  .word 2
-THREE:
-  .word 3
+  .type g, @object
+  .size g, 4
+g:
+  .word 0
 
 .text
 .globl main
+.type main, @function
 
-float_abs:
-  # Function Prologue for float_abs
-  addi sp, sp, -64
-  sd   ra, 56(sp)
-  sd   s0, 48(sp)
-  addi s0, sp, 64
-  sw   a0, -32(s0)
-.float_abs_entry:
-  #   %x1 = alloca float
-  #   store float %x, float* %x1
-  lw   t0, -32(s0)
-  addi t1, s0, -36
+func:
+  # Function Prologue for func
+  addi sp, sp, -80
+  sw   ra, 76(sp)
+  sw   s0, 72(sp)
+  addi s0, sp, 80
+  sw   a0, -48(s0)
+.func_entry:
+  #   %n1 = alloca i32
+  #   store i32 %n, i32* %n1
+  addi t1, s0, -52
+  lw   t0, -48(s0)
   sw   t0, 0(t1)
-  #   %x.val = load float, float* %x1
-  addi t0, s0, -36
-  lw   t1, 0(t0)
-  sw   t1, -40(s0)
-  #   %cmptmp = fcmp olt float %x.val, 0.000000e+00
-  flw  ft0, -40(s0)
-  li   t3, 0x0
-  sw   t3, -32(s0)
-  flw  ft1, -32(s0)
-  flt.s t2, ft0, ft1
-  sw   t2, -44(s0)
-  #   br i1 %cmptmp, label %if.then, label %if.merge
-  lw   t0, -44(s0)
-  bnez t0, .float_abs_if.then
-  j    .float_abs_if.merge
-.float_abs_if.then:
-  #   %x.val2 = load float, float* %x1
-  addi t0, s0, -36
-  lw   t1, 0(t0)
-  sw   t1, -48(s0)
-  #   %fneg = fneg float %x.val2
-  flw  ft0, -48(s0)
-  fneg.s ft1, ft0
-  fsw  ft1, -52(s0)
-  #   ret float %fneg
-  lw   a0, -52(s0)
-  j    .float_abs_epilogue
-  #   br label %if.merge
-  j    .float_abs_if.merge
-.float_abs_if.merge:
-  #   %x.val3 = load float, float* %x1
-  addi t0, s0, -36
+  #   %g.val = load i32, i32* @g
+  la   t0, g
   lw   t1, 0(t0)
   sw   t1, -56(s0)
-  #   ret float %x.val3
-  lw   a0, -56(s0)
-  j    .float_abs_epilogue
-.float_abs_epilogue:
-  # Function Epilogue for float_abs
-  ld   ra, 56(sp)
-  ld   s0, 48(sp)
-  addi sp, sp, 64
-  ret
-
-float_eq:
-  # Function Prologue for float_eq
-  addi sp, sp, -80
-  sd   ra, 72(sp)
-  sd   s0, 64(sp)
-  addi s0, sp, 80
-  sw   a0, -32(s0)
-  sw   a1, -36(s0)
-.float_eq_entry:
-  #   %b2 = alloca float
-  #   %a1 = alloca float
-  #   store float %a, float* %a1
-  lw   t0, -32(s0)
-  addi t1, s0, -44
+  #   %n.val = load i32, i32* %n1
+  addi t0, s0, -52
+  lw   t1, 0(t0)
+  sw   t1, -60(s0)
+  #   %add_tmp = add i32 %g.val, %n.val
+  lw   t0, -56(s0)
+  lw   t1, -60(s0)
+  add t2, t0, t1
+  sw   t2, -64(s0)
+  #   store i32 %add_tmp, i32* @g
+  la   t1, g
+  lw   t0, -64(s0)
   sw   t0, 0(t1)
-  #   store float %b, float* %b2
-  lw   t0, -36(s0)
-  addi t1, s0, -40
-  sw   t0, 0(t1)
-  #   %a.val = load float, float* %a1
-  addi t0, s0, -44
+  #   %g.val2 = load i32, i32* @g
+  la   t0, g
   lw   t1, 0(t0)
-  sw   t1, -48(s0)
-  #   %b.val = load float, float* %b2
-  addi t0, s0, -40
+  sw   t1, -68(s0)
+  #   call void @print_int(i32 %g.val2)
+  # --- Saving caller-saved registers before call ---
+  sw   t0, -20(s0)
+  sw   t1, -24(s0)
+  sw   t2, -28(s0)
+  sw   t3, -32(s0)
+  sw   t4, -36(s0)
+  sw   t5, -40(s0)
+  sw   t6, -44(s0)
+  lw   a0, -68(s0)
+  call print_int
+  # --- Restoring caller-saved registers after call ---
+  lw   t0, -20(s0)
+  lw   t1, -24(s0)
+  lw   t2, -28(s0)
+  lw   t3, -32(s0)
+  lw   t4, -36(s0)
+  lw   t5, -40(s0)
+  lw   t6, -44(s0)
+  #   %g.val3 = load i32, i32* @g
+  la   t0, g
   lw   t1, 0(t0)
-  sw   t1, -52(s0)
-  #   %fsub_tmp = fsub float %a.val, %b.val
-  flw  ft0, -48(s0)
-  flw  ft1, -52(s0)
-  fsub.s ft2, ft0, ft1
-  fsw  ft2, -56(s0)
-  #   %calltmp = call float @float_abs(float %fsub_tmp)
-  lw   a0, -56(s0)
-  call float_abs
-  sw   a0, -60(s0)
-  #   %EPS.val = load float, float* @EPS
-  la   t0, EPS
-  lw   t1, 0(t0)
-  sw   t1, -64(s0)
-  #   %cmptmp = fcmp olt float %calltmp, %EPS.val
-  flw  ft0, -60(s0)
-  flw  ft1, -64(s0)
-  flt.s t2, ft0, ft1
-  sw   t2, -68(s0)
-  #   br i1 %cmptmp, label %if.then, label %if.else
-  lw   t0, -68(s0)
-  bnez t0, .float_eq_if.then
-  j    .float_eq_if.else
-.float_eq_if.then:
-  #   ret i32 1
-  li   a0, 1
-  j    .float_eq_epilogue
-  #   br label %if.merge
-  j    .float_eq_if.merge
-.float_eq_if.else:
-  #   ret i32 0
-  li   a0, 0
-  j    .float_eq_epilogue
-  #   br label %if.merge
-  j    .float_eq_if.merge
-.float_eq_if.merge:
-.float_eq_epilogue:
-  # Function Epilogue for float_eq
-  ld   ra, 72(sp)
-  ld   s0, 64(sp)
+  sw   t1, -72(s0)
+  #   ret i32 %g.val3
+  lw   a0, -72(s0)
+  j    .func_epilogue
+.func_epilogue:
+  # Function Epilogue for func
+  lw   ra, 76(sp)
+  lw   s0, 72(sp)
   addi sp, sp, 80
-  ret
-
-error:
-  # Function Prologue for error
-  addi sp, sp, -32
-  sd   ra, 24(sp)
-  sd   s0, 16(sp)
-  addi s0, sp, 32
-.error_entry:
-  #   call void @print_char(i8 101)
-  li   a0, 101
-  call print_char
-  #   call void @print_char(i8 114)
-  li   a0, 114
-  call print_char
-  #   call void @print_char(i8 114)
-  li   a0, 114
-  call print_char
-  #   call void @print_char(i8 111)
-  li   a0, 111
-  call print_char
-  #   call void @print_char(i8 114)
-  li   a0, 114
-  call print_char
-  #   call void @print_char(i8 92)
-  li   a0, 92
-  call print_char
-.error_epilogue:
-  # Function Epilogue for error
-  ld   ra, 24(sp)
-  ld   s0, 16(sp)
-  addi sp, sp, 32
-  ret
-
-ok:
-  # Function Prologue for ok
-  addi sp, sp, -32
-  sd   ra, 24(sp)
-  sd   s0, 16(sp)
-  addi s0, sp, 32
-.ok_entry:
-  #   call void @print_char(i8 111)
-  li   a0, 111
-  call print_char
-  #   call void @print_char(i8 107)
-  li   a0, 107
-  call print_char
-  #   call void @print_char(i8 92)
-  li   a0, 92
-  call print_char
-.ok_epilogue:
-  # Function Epilogue for ok
-  ld   ra, 24(sp)
-  ld   s0, 16(sp)
-  addi sp, sp, 32
-  ret
-
-assert:
-  # Function Prologue for assert
-  addi sp, sp, -48
-  sd   ra, 40(sp)
-  sd   s0, 32(sp)
-  addi s0, sp, 48
-  sw   a0, -32(s0)
-.assert_entry:
-  #   %cond1 = alloca i32
-  #   store i32 %cond, i32* %cond1
-  lw   t0, -32(s0)
-  addi t1, s0, -36
-  sw   t0, 0(t1)
-  #   %cond.val = load i32, i32* %cond1
-  addi t0, s0, -36
-  lw   t1, 0(t0)
-  sw   t1, -40(s0)
-  #   %eqtmp = icmp eq i32 %cond.val, 0
-  lw   t0, -40(s0)
-  li   t1, 0
-  li   t2, 0
-  bne t0, t1, .assert_skip38644736
-  li   t2, 1
-.assert_skip38644736:
-  sw   t2, -44(s0)
-  #   br i1 %eqtmp, label %if.then, label %if.else
-  lw   t0, -44(s0)
-  bnez t0, .assert_if.then
-  j    .assert_if.else
-.assert_if.then:
-  #   call void @error()
-  call error
-  #   br label %if.merge
-  j    .assert_if.merge
-.assert_if.else:
-  #   call void @ok()
-  call ok
-  #   br label %if.merge
-  j    .assert_if.merge
-.assert_if.merge:
-.assert_epilogue:
-  # Function Epilogue for assert
-  ld   ra, 40(sp)
-  ld   s0, 32(sp)
-  addi sp, sp, 48
-  ret
-
-assert_not:
-  # Function Prologue for assert_not
-  addi sp, sp, -48
-  sd   ra, 40(sp)
-  sd   s0, 32(sp)
-  addi s0, sp, 48
-  sw   a0, -32(s0)
-.assert_not_entry:
-  #   %cond1 = alloca i32
-  #   store i32 %cond, i32* %cond1
-  lw   t0, -32(s0)
-  addi t1, s0, -36
-  sw   t0, 0(t1)
-  #   %cond.val = load i32, i32* %cond1
-  addi t0, s0, -36
-  lw   t1, 0(t0)
-  sw   t1, -40(s0)
-  #   %tobool = icmp ne i32 %cond.val, 0
-  lw   t0, -40(s0)
-  li   t1, 0
-  li   t2, 0
-  beq t0, t1, .assert_not_skip38647328
-  li   t2, 1
-.assert_not_skip38647328:
-  sw   t2, -44(s0)
-  #   br i1 %tobool, label %if.then, label %if.else
-  lw   t0, -44(s0)
-  bnez t0, .assert_not_if.then
-  j    .assert_not_if.else
-.assert_not_if.then:
-  #   call void @error()
-  call error
-  #   br label %if.merge
-  j    .assert_not_if.merge
-.assert_not_if.else:
-  #   call void @ok()
-  call ok
-  #   br label %if.merge
-  j    .assert_not_if.merge
-.assert_not_if.merge:
-.assert_not_epilogue:
-  # Function Epilogue for assert_not
-  ld   ra, 40(sp)
-  ld   s0, 32(sp)
-  addi sp, sp, 48
   ret
 
 main:
   # Function Prologue for main
-  addi sp, sp, -176
-  sd   ra, 168(sp)
-  sd   s0, 160(sp)
-  addi s0, sp, 176
+  addi sp, sp, -192
+  sw   ra, 188(sp)
+  sw   s0, 184(sp)
+  addi s0, sp, 192
 .main_entry:
-  #   %EVAL1 = alloca float
-  #   store float 0.000000e+00, float* %EVAL1
-  li   t0, 0x0
-  addi t1, s0, -32
+  #   %i = alloca i32
+  #   store i32 0, i32* %i
+  addi t1, s0, -48
+  lui  t0, 0
   sw   t0, 0(t1)
-  #   %PI.val = load float, float* @PI
-  la   t0, PI
-  lw   t1, 0(t0)
-  sw   t1, -36(s0)
-  #   %RADIUS.val = load float, float* @RADIUS
-  la   t0, RADIUS
-  lw   t1, 0(t0)
-  sw   t1, -40(s0)
-  #   %fmul_tmp = fmul float %PI.val, %RADIUS.val
-  flw  ft0, -36(s0)
-  flw  ft1, -40(s0)
-  fmul.s ft2, ft0, ft1
-  fsw  ft2, -44(s0)
-  #   %RADIUS.val1 = load float, float* @RADIUS
-  la   t0, RADIUS
-  lw   t1, 0(t0)
-  sw   t1, -48(s0)
-  #   %fmul_tmp2 = fmul float %fmul_tmp, %RADIUS.val1
-  flw  ft0, -44(s0)
-  flw  ft1, -48(s0)
-  fmul.s ft2, ft0, ft1
-  fsw  ft2, -52(s0)
-  #   store float %fmul_tmp2, float* %EVAL1
+  #   %calltmp = call i32 @get_int()
+  # --- Saving caller-saved registers before call ---
+  sw   t0, -20(s0)
+  sw   t1, -24(s0)
+  sw   t2, -28(s0)
+  sw   t3, -32(s0)
+  sw   t4, -36(s0)
+  sw   t5, -40(s0)
+  sw   t6, -44(s0)
+  call get_int
+  # --- Restoring caller-saved registers after call ---
+  lw   t0, -20(s0)
+  lw   t1, -24(s0)
+  lw   t2, -28(s0)
+  lw   t3, -32(s0)
+  lw   t4, -36(s0)
+  lw   t5, -40(s0)
+  lw   t6, -44(s0)
+  sw   a0, -52(s0)
+  #   store i32 %calltmp, i32* %i
+  addi t1, s0, -48
   lw   t0, -52(s0)
-  addi t1, s0, -32
   sw   t0, 0(t1)
-  #   %EVAL2 = alloca float
-  #   store float 2.000000e+00, float* %EVAL2
-  li   t0, 0x40000000
-  addi t1, s0, -56
-  sw   t0, 0(t1)
-  #   %EVAL2.val = load float, float* %EVAL2
-  addi t0, s0, -56
+  #   %i.val = load i32, i32* %i
+  addi t0, s0, -48
   lw   t1, 0(t0)
-  sw   t1, -60(s0)
-  #   %PI_HEX.val = load float, float* @PI_HEX
-  la   t0, PI_HEX
+  sw   t1, -56(s0)
+  #   %cmptmp = icmp sgt i32 %i.val, 10
+  lw   t0, -56(s0)
+  lui  t1, 0
+  addi t1, t1, 10
+  li   t2, 0
+  ble t0, t1, .main_skip94226551588528
+  li   t2, 1
+.main_skip94226551588528:
+  sw   t2, -60(s0)
+  #   br i1 %cmptmp, label %and.rhs, label %and.end
+  lw   t0, -60(s0)
+  beqz t0, .entry_br_false_path_94226551588920
+  j .main_and.rhs
+.entry_br_false_path_94226551588920:
+  lui  t2, 0
+  sw   t2, -76(s0)
+  j .main_and.end
+.main_and.rhs:
+  #   %i.val1 = load i32, i32* %i
+  addi t0, s0, -48
   lw   t1, 0(t0)
   sw   t1, -64(s0)
-  #   %fmul_tmp3 = fmul float %EVAL2.val, %PI_HEX.val
-  flw  ft0, -60(s0)
-  flw  ft1, -64(s0)
-  fmul.s ft2, ft0, ft1
-  fsw  ft2, -68(s0)
-  #   %RADIUS.val4 = load float, float* @RADIUS
-  la   t0, RADIUS
-  lw   t1, 0(t0)
-  sw   t1, -72(s0)
-  #   %fmul_tmp5 = fmul float %fmul_tmp3, %RADIUS.val4
-  flw  ft0, -68(s0)
-  flw  ft1, -72(s0)
-  fmul.s ft2, ft0, ft1
-  fsw  ft2, -76(s0)
-  #   store float %fmul_tmp5, float* %EVAL2
+  #   %calltmp2 = call i32 @func(i32 %i.val1)
+  # --- Saving caller-saved registers before call ---
+  sw   t0, -20(s0)
+  sw   t1, -24(s0)
+  sw   t2, -28(s0)
+  sw   t3, -32(s0)
+  sw   t4, -36(s0)
+  sw   t5, -40(s0)
+  sw   t6, -44(s0)
+  lw   a0, -64(s0)
+  call func
+  # --- Restoring caller-saved registers after call ---
+  lw   t0, -20(s0)
+  lw   t1, -24(s0)
+  lw   t2, -28(s0)
+  lw   t3, -32(s0)
+  lw   t4, -36(s0)
+  lw   t5, -40(s0)
+  lw   t6, -44(s0)
+  sw   a0, -68(s0)
+  #   %tobool = icmp ne i32 %calltmp2, 0
+  lw   t0, -68(s0)
+  lui  t1, 0
+  li   t2, 0
+  beq t0, t1, .main_skip94226551589360
+  li   t2, 1
+.main_skip94226551589360:
+  sw   t2, -72(s0)
+  #   br label %and.end
+  lw   t2, -72(s0)
+  sw   t2, -76(s0)
+  j .main_and.end
+.main_and.end:
+  #   %and.result = phi i1 [ false, %entry ], [ %tobool, %and.rhs ]
+  #   br i1 %and.result, label %if.then, label %if.else
   lw   t0, -76(s0)
-  addi t1, s0, -56
+  beqz t0, .and.end_br_false_path_94226551590584
+  j .main_if.then
+.and.end_br_false_path_94226551590584:
+  j .main_if.else
+.main_if.then:
+  #   store i32 1, i32* %i
+  addi t1, s0, -48
+  lui  t0, 0
+  addi t0, t0, 1
   sw   t0, 0(t1)
-  #   %EVAL3 = alloca float
-  #   store float 2.000000e+00, float* %EVAL3
-  li   t0, 0x40000000
-  addi t1, s0, -80
+  #   br label %if.merge
+  j .main_if.merge
+.main_if.else:
+  #   store i32 0, i32* %i
+  addi t1, s0, -48
+  lui  t0, 0
   sw   t0, 0(t1)
-  #   %PI.val6 = load float, float* @PI
-  la   t0, PI
+  #   br label %if.merge
+  j .main_if.merge
+.main_if.merge:
+  #   %calltmp3 = call i32 @get_int()
+  # --- Saving caller-saved registers before call ---
+  sw   t0, -20(s0)
+  sw   t1, -24(s0)
+  sw   t2, -28(s0)
+  sw   t3, -32(s0)
+  sw   t4, -36(s0)
+  sw   t5, -40(s0)
+  sw   t6, -44(s0)
+  call get_int
+  # --- Restoring caller-saved registers after call ---
+  lw   t0, -20(s0)
+  lw   t1, -24(s0)
+  lw   t2, -28(s0)
+  lw   t3, -32(s0)
+  lw   t4, -36(s0)
+  lw   t5, -40(s0)
+  lw   t6, -44(s0)
+  sw   a0, -80(s0)
+  #   store i32 %calltmp3, i32* %i
+  addi t1, s0, -48
+  lw   t0, -80(s0)
+  sw   t0, 0(t1)
+  #   %i.val4 = load i32, i32* %i
+  addi t0, s0, -48
   lw   t1, 0(t0)
   sw   t1, -84(s0)
-  #   %EVAL3.val = load float, float* %EVAL3
-  addi t0, s0, -80
+  #   %cmptmp5 = icmp sgt i32 %i.val4, 11
+  lw   t0, -84(s0)
+  lui  t1, 0
+  addi t1, t1, 11
+  li   t2, 0
+  ble t0, t1, .main_skip94226551591616
+  li   t2, 1
+.main_skip94226551591616:
+  sw   t2, -88(s0)
+  #   br i1 %cmptmp5, label %and.rhs6, label %and.end7
+  lw   t0, -88(s0)
+  beqz t0, .if.merge_br_false_path_94226551592040
+  j .main_and.rhs6
+.if.merge_br_false_path_94226551592040:
+  lui  t2, 0
+  sw   t2, -104(s0)
+  j .main_and.end7
+.main_and.rhs6:
+  #   %i.val8 = load i32, i32* %i
+  addi t0, s0, -48
   lw   t1, 0(t0)
-  sw   t1, -88(s0)
-  #   %fmul_tmp7 = fmul float %PI.val6, %EVAL3.val
-  flw  ft0, -84(s0)
-  flw  ft1, -88(s0)
-  fmul.s ft2, ft0, ft1
-  fsw  ft2, -92(s0)
-  #   %RADIUS.val8 = load float, float* @RADIUS
-  la   t0, RADIUS
-  lw   t1, 0(t0)
-  sw   t1, -96(s0)
-  #   %fmul_tmp9 = fmul float %fmul_tmp7, %RADIUS.val8
-  flw  ft0, -92(s0)
-  flw  ft1, -96(s0)
-  fmul.s ft2, ft0, ft1
-  fsw  ft2, -100(s0)
-  #   store float %fmul_tmp9, float* %EVAL3
-  lw   t0, -100(s0)
-  addi t1, s0, -80
+  sw   t1, -92(s0)
+  #   %calltmp9 = call i32 @func(i32 %i.val8)
+  # --- Saving caller-saved registers before call ---
+  sw   t0, -20(s0)
+  sw   t1, -24(s0)
+  sw   t2, -28(s0)
+  sw   t3, -32(s0)
+  sw   t4, -36(s0)
+  sw   t5, -40(s0)
+  sw   t6, -44(s0)
+  lw   a0, -92(s0)
+  call func
+  # --- Restoring caller-saved registers after call ---
+  lw   t0, -20(s0)
+  lw   t1, -24(s0)
+  lw   t2, -28(s0)
+  lw   t3, -32(s0)
+  lw   t4, -36(s0)
+  lw   t5, -40(s0)
+  lw   t6, -44(s0)
+  sw   a0, -96(s0)
+  #   %tobool10 = icmp ne i32 %calltmp9, 0
+  lw   t0, -96(s0)
+  lui  t1, 0
+  li   t2, 0
+  beq t0, t1, .main_skip94226551592528
+  li   t2, 1
+.main_skip94226551592528:
+  sw   t2, -100(s0)
+  #   br label %and.end7
+  lw   t2, -100(s0)
+  sw   t2, -104(s0)
+  j .main_and.end7
+.main_and.end7:
+  #   %and.result11 = phi i1 [ false, %if.merge ], [ %tobool10, %and.rhs6 ]
+  #   br i1 %and.result11, label %if.then12, label %if.else13
+  lw   t0, -104(s0)
+  beqz t0, .and.end7_br_false_path_94226551594200
+  j .main_if.then12
+.and.end7_br_false_path_94226551594200:
+  j .main_if.else13
+.main_if.then12:
+  #   store i32 1, i32* %i
+  addi t1, s0, -48
+  lui  t0, 0
+  addi t0, t0, 1
   sw   t0, 0(t1)
-  #   %FIVE = alloca i32
-  #   store i32 0, i32* %FIVE
-  li   t0, 0
-  addi t1, s0, -104
+  #   br label %if.merge14
+  j .main_if.merge14
+.main_if.else13:
+  #   store i32 0, i32* %i
+  addi t1, s0, -48
+  lui  t0, 0
   sw   t0, 0(t1)
-  #   %TWO.val = load i32, i32* @TWO
-  la   t0, TWO
-  lw   t1, 0(t0)
-  sw   t1, -108(s0)
-  #   %THREE.val = load i32, i32* @THREE
-  la   t0, THREE
+  #   br label %if.merge14
+  j .main_if.merge14
+.main_if.merge14:
+  #   %calltmp15 = call i32 @get_int()
+  # --- Saving caller-saved registers before call ---
+  sw   t0, -20(s0)
+  sw   t1, -24(s0)
+  sw   t2, -28(s0)
+  sw   t3, -32(s0)
+  sw   t4, -36(s0)
+  sw   t5, -40(s0)
+  sw   t6, -44(s0)
+  call get_int
+  # --- Restoring caller-saved registers after call ---
+  lw   t0, -20(s0)
+  lw   t1, -24(s0)
+  lw   t2, -28(s0)
+  lw   t3, -32(s0)
+  lw   t4, -36(s0)
+  lw   t5, -40(s0)
+  lw   t6, -44(s0)
+  sw   a0, -108(s0)
+  #   store i32 %calltmp15, i32* %i
+  addi t1, s0, -48
+  lw   t0, -108(s0)
+  sw   t0, 0(t1)
+  #   %i.val16 = load i32, i32* %i
+  addi t0, s0, -48
   lw   t1, 0(t0)
   sw   t1, -112(s0)
-  #   %add_tmp = add i32 %TWO.val, %THREE.val
-  lw   t0, -108(s0)
-  lw   t1, -112(s0)
-  add t2, t0, t1
+  #   %cmptmp17 = icmp sle i32 %i.val16, 99
+  lw   t0, -112(s0)
+  lui  t1, 0
+  addi t1, t1, 99
+  li   t2, 0
+  bgt t0, t1, .main_skip94226551597264
+  li   t2, 1
+.main_skip94226551597264:
   sw   t2, -116(s0)
-  #   store i32 %add_tmp, i32* %FIVE
+  #   br i1 %cmptmp17, label %or.end, label %or.rhs
   lw   t0, -116(s0)
-  addi t1, s0, -104
-  sw   t0, 0(t1)
-  #   %HEX2.val = load float, float* @HEX2
-  la   t0, HEX2
+  beqz t0, .if.merge14_br_false_path_94226551597640
+  lui  t2, 0
+  addi t2, t2, -1
+  sw   t2, -132(s0)
+  j .main_or.end
+.if.merge14_br_false_path_94226551597640:
+  j .main_or.rhs
+.main_or.rhs:
+  #   %i.val18 = load i32, i32* %i
+  addi t0, s0, -48
   lw   t1, 0(t0)
   sw   t1, -120(s0)
-  #   %FACT.val = load float, float* @FACT
-  la   t0, FACT
-  lw   t1, 0(t0)
-  sw   t1, -124(s0)
-  #   %calltmp = call i32 @float_eq(float %HEX2.val, float %FACT.val)
+  #   %calltmp19 = call i32 @func(i32 %i.val18)
+  # --- Saving caller-saved registers before call ---
+  sw   t0, -20(s0)
+  sw   t1, -24(s0)
+  sw   t2, -28(s0)
+  sw   t3, -32(s0)
+  sw   t4, -36(s0)
+  sw   t5, -40(s0)
+  sw   t6, -44(s0)
   lw   a0, -120(s0)
-  lw   a1, -124(s0)
-  call float_eq
-  sw   a0, -128(s0)
-  #   call void @assert_not(i32 %calltmp)
-  lw   a0, -128(s0)
-  call assert_not
-  #   %EVAL1.val = load float, float* %EVAL1
-  addi t0, s0, -32
+  call func
+  # --- Restoring caller-saved registers after call ---
+  lw   t0, -20(s0)
+  lw   t1, -24(s0)
+  lw   t2, -28(s0)
+  lw   t3, -32(s0)
+  lw   t4, -36(s0)
+  lw   t5, -40(s0)
+  lw   t6, -44(s0)
+  sw   a0, -124(s0)
+  #   %tobool20 = icmp ne i32 %calltmp19, 0
+  lw   t0, -124(s0)
+  lui  t1, 0
+  li   t2, 0
+  beq t0, t1, .main_skip94226551598128
+  li   t2, 1
+.main_skip94226551598128:
+  sw   t2, -128(s0)
+  #   br label %or.end
+  lw   t2, -128(s0)
+  sw   t2, -132(s0)
+  j .main_or.end
+.main_or.end:
+  #   %or.result = phi i1 [ true, %if.merge14 ], [ %tobool20, %or.rhs ]
+  #   br i1 %or.result, label %if.then21, label %if.else22
+  lw   t0, -132(s0)
+  beqz t0, .or.end_br_false_path_94226551599048
+  j .main_if.then21
+.or.end_br_false_path_94226551599048:
+  j .main_if.else22
+.main_if.then21:
+  #   store i32 1, i32* %i
+  addi t1, s0, -48
+  lui  t0, 0
+  addi t0, t0, 1
+  sw   t0, 0(t1)
+  #   br label %if.merge23
+  j .main_if.merge23
+.main_if.else22:
+  #   store i32 0, i32* %i
+  addi t1, s0, -48
+  lui  t0, 0
+  sw   t0, 0(t1)
+  #   br label %if.merge23
+  j .main_if.merge23
+.main_if.merge23:
+  #   %calltmp24 = call i32 @get_int()
+  # --- Saving caller-saved registers before call ---
+  sw   t0, -20(s0)
+  sw   t1, -24(s0)
+  sw   t2, -28(s0)
+  sw   t3, -32(s0)
+  sw   t4, -36(s0)
+  sw   t5, -40(s0)
+  sw   t6, -44(s0)
+  call get_int
+  # --- Restoring caller-saved registers after call ---
+  lw   t0, -20(s0)
+  lw   t1, -24(s0)
+  lw   t2, -28(s0)
+  lw   t3, -32(s0)
+  lw   t4, -36(s0)
+  lw   t5, -40(s0)
+  lw   t6, -44(s0)
+  sw   a0, -136(s0)
+  #   store i32 %calltmp24, i32* %i
+  addi t1, s0, -48
+  lw   t0, -136(s0)
+  sw   t0, 0(t1)
+  #   %i.val25 = load i32, i32* %i
+  addi t0, s0, -48
   lw   t1, 0(t0)
-  sw   t1, -132(s0)
-  #   %EVAL2.val10 = load float, float* %EVAL2
-  addi t0, s0, -56
-  lw   t1, 0(t0)
-  sw   t1, -136(s0)
-  #   %calltmp11 = call i32 @float_eq(float %EVAL1.val, float %EVAL2.val10)
-  lw   a0, -132(s0)
-  lw   a1, -136(s0)
-  call float_eq
-  sw   a0, -140(s0)
-  #   call void @assert_not(i32 %calltmp11)
-  lw   a0, -140(s0)
-  call assert_not
-  #   %EVAL2.val12 = load float, float* %EVAL2
-  addi t0, s0, -56
-  lw   t1, 0(t0)
-  sw   t1, -144(s0)
-  #   %EVAL3.val13 = load float, float* %EVAL3
-  addi t0, s0, -80
+  sw   t1, -140(s0)
+  #   %cmptmp26 = icmp sle i32 %i.val25, 100
+  lw   t0, -140(s0)
+  lui  t1, 0
+  addi t1, t1, 100
+  li   t2, 0
+  bgt t0, t1, .main_skip94226551600048
+  li   t2, 1
+.main_skip94226551600048:
+  sw   t2, -144(s0)
+  #   br i1 %cmptmp26, label %or.end28, label %or.rhs27
+  lw   t0, -144(s0)
+  beqz t0, .if.merge23_br_false_path_94226551600488
+  lui  t2, 0
+  addi t2, t2, -1
+  sw   t2, -160(s0)
+  j .main_or.end28
+.if.merge23_br_false_path_94226551600488:
+  j .main_or.rhs27
+.main_or.rhs27:
+  #   %i.val29 = load i32, i32* %i
+  addi t0, s0, -48
   lw   t1, 0(t0)
   sw   t1, -148(s0)
-  #   %calltmp14 = call i32 @float_eq(float %EVAL2.val12, float %EVAL3.val13)
-  lw   a0, -144(s0)
-  lw   a1, -148(s0)
-  call float_eq
+  #   %calltmp30 = call i32 @func(i32 %i.val29)
+  # --- Saving caller-saved registers before call ---
+  sw   t0, -20(s0)
+  sw   t1, -24(s0)
+  sw   t2, -28(s0)
+  sw   t3, -32(s0)
+  sw   t4, -36(s0)
+  sw   t5, -40(s0)
+  sw   t6, -44(s0)
+  lw   a0, -148(s0)
+  call func
+  # --- Restoring caller-saved registers after call ---
+  lw   t0, -20(s0)
+  lw   t1, -24(s0)
+  lw   t2, -28(s0)
+  lw   t3, -32(s0)
+  lw   t4, -36(s0)
+  lw   t5, -40(s0)
+  lw   t6, -44(s0)
   sw   a0, -152(s0)
-  #   call void @assert(i32 %calltmp14)
-  lw   a0, -152(s0)
-  call assert
-  #   %CONV1.val = load float, float* @CONV1
-  la   t0, CONV1
-  lw   t1, 0(t0)
-  sw   t1, -156(s0)
-  #   %CONV2.val = load float, float* @CONV2
-  la   t0, CONV2
-  lw   t1, 0(t0)
-  sw   t1, -160(s0)
-  #   %calltmp15 = call i32 @float_eq(float %CONV1.val, float %CONV2.val)
-  lw   a0, -156(s0)
-  lw   a1, -160(s0)
-  call float_eq
+  #   %tobool31 = icmp ne i32 %calltmp30, 0
+  lw   t0, -152(s0)
+  lui  t1, 0
+  li   t2, 0
+  beq t0, t1, .main_skip94226551600944
+  li   t2, 1
+.main_skip94226551600944:
+  sw   t2, -156(s0)
+  #   br label %or.end28
+  lw   t2, -156(s0)
+  sw   t2, -160(s0)
+  j .main_or.end28
+.main_or.end28:
+  #   %or.result32 = phi i1 [ true, %if.merge23 ], [ %tobool31, %or.rhs27 ]
+  #   br i1 %or.result32, label %if.then33, label %if.else34
+  lw   t0, -160(s0)
+  beqz t0, .or.end28_br_false_path_94226551603384
+  j .main_if.then33
+.or.end28_br_false_path_94226551603384:
+  j .main_if.else34
+.main_if.then33:
+  #   store i32 1, i32* %i
+  addi t1, s0, -48
+  lui  t0, 0
+  addi t0, t0, 1
+  sw   t0, 0(t1)
+  #   br label %if.merge35
+  j .main_if.merge35
+.main_if.else34:
+  #   store i32 0, i32* %i
+  addi t1, s0, -48
+  lui  t0, 0
+  sw   t0, 0(t1)
+  #   br label %if.merge35
+  j .main_if.merge35
+.main_if.merge35:
+  #   %calltmp36 = call i32 @func(i32 99)
+  # --- Saving caller-saved registers before call ---
+  sw   t0, -20(s0)
+  sw   t1, -24(s0)
+  sw   t2, -28(s0)
+  sw   t3, -32(s0)
+  sw   t4, -36(s0)
+  sw   t5, -40(s0)
+  sw   t6, -44(s0)
+  lui  a0, 0
+  addi a0, a0, 99
+  call func
+  # --- Restoring caller-saved registers after call ---
+  lw   t0, -20(s0)
+  lw   t1, -24(s0)
+  lw   t2, -28(s0)
+  lw   t3, -32(s0)
+  lw   t4, -36(s0)
+  lw   t5, -40(s0)
+  lw   t6, -44(s0)
   sw   a0, -164(s0)
-  #   call void @assert_not(i32 %calltmp15)
-  lw   a0, -164(s0)
-  call assert_not
+  #   %tobool37 = icmp ne i32 %calltmp36, 0
+  lw   t0, -164(s0)
+  lui  t1, 0
+  li   t2, 0
+  beq t0, t1, .main_skip94226551604128
+  li   t2, 1
+.main_skip94226551604128:
+  sw   t2, -168(s0)
+  #   %logicalnot = icmp eq i1 %tobool37, false
+  lw   t0, -168(s0)
+  lui  t1, 0
+  li   t2, 0
+  bne t0, t1, .main_skip94226551604288
+  li   t2, 1
+.main_skip94226551604288:
+  sw   t2, -172(s0)
+  #   br i1 %logicalnot, label %and.rhs38, label %and.end39
+  lw   t0, -172(s0)
+  beqz t0, .if.merge35_br_false_path_94226551604728
+  j .main_and.rhs38
+.if.merge35_br_false_path_94226551604728:
+  lui  t2, 0
+  sw   t2, -184(s0)
+  j .main_and.end39
+.main_and.rhs38:
+  #   %calltmp40 = call i32 @func(i32 100)
+  # --- Saving caller-saved registers before call ---
+  sw   t0, -20(s0)
+  sw   t1, -24(s0)
+  sw   t2, -28(s0)
+  sw   t3, -32(s0)
+  sw   t4, -36(s0)
+  sw   t5, -40(s0)
+  sw   t6, -44(s0)
+  lui  a0, 0
+  addi a0, a0, 100
+  call func
+  # --- Restoring caller-saved registers after call ---
+  lw   t0, -20(s0)
+  lw   t1, -24(s0)
+  lw   t2, -28(s0)
+  lw   t3, -32(s0)
+  lw   t4, -36(s0)
+  lw   t5, -40(s0)
+  lw   t6, -44(s0)
+  sw   a0, -176(s0)
+  #   %tobool41 = icmp ne i32 %calltmp40, 0
+  lw   t0, -176(s0)
+  lui  t1, 0
+  li   t2, 0
+  beq t0, t1, .main_skip94226551605024
+  li   t2, 1
+.main_skip94226551605024:
+  sw   t2, -180(s0)
+  #   br label %and.end39
+  lw   t2, -180(s0)
+  sw   t2, -184(s0)
+  j .main_and.end39
+.main_and.end39:
+  #   %and.result42 = phi i1 [ false, %if.merge35 ], [ %tobool41, %and.rhs38 ]
+  #   br i1 %and.result42, label %if.then43, label %if.else44
+  lw   t0, -184(s0)
+  beqz t0, .and.end39_br_false_path_94226551605896
+  j .main_if.then43
+.and.end39_br_false_path_94226551605896:
+  j .main_if.else44
+.main_if.then43:
+  #   store i32 1, i32* %i
+  addi t1, s0, -48
+  lui  t0, 0
+  addi t0, t0, 1
+  sw   t0, 0(t1)
+  #   br label %if.merge45
+  j .main_if.merge45
+.main_if.else44:
+  #   store i32 0, i32* %i
+  addi t1, s0, -48
+  lui  t0, 0
+  sw   t0, 0(t1)
+  #   br label %if.merge45
+  j .main_if.merge45
+.main_if.merge45:
   #   ret i32 0
-  li   a0, 0
+  lui  a0, 0
   j    .main_epilogue
 .main_epilogue:
   # Function Epilogue for main
-  ld   ra, 168(sp)
-  ld   s0, 160(sp)
-  addi sp, sp, 176
+  lw   ra, 188(sp)
+  lw   s0, 184(sp)
+  addi sp, sp, 192
   ret

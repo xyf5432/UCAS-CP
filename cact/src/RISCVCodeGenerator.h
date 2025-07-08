@@ -57,6 +57,19 @@ private:
     void loadFloatValueToReg(llvm::Value* value, const std::string& reg);
     void storeFloatRegToValue(const std::string& reg, llvm::Value* value);
 
+    static std::string valueToString(const llvm::Value* V) {
+        if (!V) return "<null>";
+        std::string s;
+        llvm::raw_string_ostream os(s);
+        V->print(os);
+        // raw_string_ostream 在字符串的开头可能会有多余的空格或缩进，去掉它们
+        size_t pos = os.str().find_first_not_of(" \t");
+        if (std::string::npos != pos) {
+            return os.str().substr(pos);
+        }
+        return os.str();
+    }
+
 
     std::ofstream out; // 输出文件流
 

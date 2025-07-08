@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/compiler14/compiler14/cact/build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
